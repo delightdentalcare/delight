@@ -3,131 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public Comments - Delight Dental Care</title>
+  <title>Public Comments - Delight Dental</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #0066cc;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    .container {
-      max-width: 700px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    form input, form textarea, form button {
-      width: 100%;
-      margin-bottom: 15px;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    form button {
-      background: #0066cc;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    form button:hover {
-      background: #004c99;
-    }
-    .comment {
-      background: #f1f1f1;
-      margin: 10px 0;
-      padding: 12px;
-      border-radius: 6px;
-    }
-    .comment strong {
-      color: #0066cc;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    h2 { color: #2c3e50; }
+    form { margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input, textarea { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #28a745; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #218838; }
+    .comment-box { background: #fff; margin-bottom: 10px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+    .comment-author { font-weight: bold; color: #333; }
+    .comment-text { margin: 5px 0; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Delight Dental Care - Public Comments</h1>
-  </header>
 
-  <div class="container">
-    <h2>Leave a Comment</h2>
-    <form id="commentForm">
-      <input type="text" id="name" placeholder="Your Name" required>
-      <textarea id="message" placeholder="Your Comment" rows="4" required></textarea>
-      <button type="submit">Post Comment</button>
-    </form>
+  <h2>💬 Public Comments</h2>
 
-    <h2>All Comments</h2>
-    <div id="commentsList"></div>
-  </div>
+  <form id="commentForm">
+    <input type="text" id="name" placeholder="Your name" required>
+    <textarea id="comment" placeholder="Write a comment..." required></textarea>
+    <button type="submit">Post Comment</button>
+  </form>
+
+  <div id="commentsList"></div>
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <script type="module">
+    // Import Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  <script>
-    // 🔹 Replace with YOUR Firebase config (from Firebase Console → Web App → Config)
+    // Your Firebase Config
     const firebaseConfig = {
-      apiKey: "AIzaSyDUZSWnq4B8VxKZwrSARa49zw99O6CdHkU",
-      authDomain: "delight-dental-comments.firebaseapp.com",
-      projectId: "delight-dental-comments",
-      storageBucket: "delight-dental-comments.appspot.com",
-      messagingSenderId: "327689341967",
-      appId: "1:327689341967:web:b4bfaa516c16f6b2a0cc99"
+      apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
+      authDomain: "delight-program.firebaseapp.com",
+      projectId: "delight-program",
+      storageBucket: "delight-program.firebasestorage.app",
+      messagingSenderId: "972498440796",
+      appId: "1:972498440796:web:b4bfaa516c16f6b2a0cc99"
     };
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    const commentForm = document.getElementById("commentForm");
+    const form = document.getElementById("commentForm");
     const commentsList = document.getElementById("commentsList");
 
-    // Submit Comment
-    commentForm.addEventListener("submit", async (e) => {
+    // Save comment
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value;
-      const message = document.getElementById("message").value;
+      const comment = document.getElementById("comment").value;
 
-      if (name && message) {
-        await db.collection("comments").add({
-          name,
-          message,
+      try {
+        await addDoc(collection(db, "comments"), {
+          name: name,
+          comment: comment,
           timestamp: new Date()
         });
-        commentForm.reset();
+        form.reset();
+      } catch (err) {
+        console.error("Error adding comment: ", err);
       }
     });
 
-    // Show Comments in Real-Time
-    db.collection("comments")
-      .orderBy("timestamp", "desc")
-      .onSnapshot(snapshot => {
-        commentsList.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const div = document.createElement("div");
-          div.classList.add("comment");
-          div.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
-          commentsList.appendChild(div);
-        });
+    // Load comments live
+    const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+      commentsList.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.classList.add("comment-box");
+        div.innerHTML = `
+          <div class="comment-author">${data.name}</div>
+          <div class="comment-text">${data.comment}</div>
+        `;
+        commentsList.appendChild(div);
       });
+    });
   </script>
+
 </body>
 </html>
