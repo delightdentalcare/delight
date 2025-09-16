@@ -3,38 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public Comments - Delight Dental</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    h2 { color: #2c3e50; }
-    form { margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    input, textarea { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { background: #28a745; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #218838; }
-    .comment-box { background: #fff; margin-bottom: 10px; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
-    .comment-author { font-weight: bold; color: #333; }
-    .comment-text { margin: 5px 0; }
-  </style>
+  <title>Public Comments</title>
 </head>
 <body>
-
-  <h2>💬 Public Comments</h2>
-
+  <h2>Leave a Comment</h2>
   <form id="commentForm">
-    <input type="text" id="name" placeholder="Your name" required>
-    <textarea id="comment" placeholder="Write a comment..." required></textarea>
+    <input type="text" id="name" placeholder="Your Name" required>
+    <br><br>
+    <textarea id="comment" placeholder="Your Comment" required></textarea>
+    <br><br>
     <button type="submit">Post Comment</button>
   </form>
 
+  <h2>Public Comments</h2>
   <div id="commentsList"></div>
 
   <!-- Firebase SDK -->
   <script type="module">
-    // Import Firebase SDK
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    // Your Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
       authDomain: "delight-program.firebaseapp.com",
@@ -44,47 +32,37 @@
       appId: "1:972498440796:web:b4bfaa516c16f6b2a0cc99"
     };
 
-    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const form = document.getElementById("commentForm");
-    const commentsList = document.getElementById("commentsList");
-
-    // Save comment
-    form.addEventListener("submit", async (e) => {
+    // Save comments
+    document.getElementById("commentForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value;
       const comment = document.getElementById("comment").value;
 
-      try {
+      if (name && comment) {
         await addDoc(collection(db, "comments"), {
-          name: name,
-          comment: comment,
+          name,
+          comment,
           timestamp: new Date()
         });
-        form.reset();
-      } catch (err) {
-        console.error("Error adding comment: ", err);
+
+        document.getElementById("name").value = "";
+        document.getElementById("comment").value = "";
       }
     });
 
-    // Load comments live
+    // Show comments in real-time
     const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
-      commentsList.innerHTML = "";
+      let commentsDiv = document.getElementById("commentsList");
+      commentsDiv.innerHTML = "";
       snapshot.forEach((doc) => {
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.classList.add("comment-box");
-        div.innerHTML = `
-          <div class="comment-author">${data.name}</div>
-          <div class="comment-text">${data.comment}</div>
-        `;
-        commentsList.appendChild(div);
+        let data = doc.data();
+        commentsDiv.innerHTML += `<p><strong>${data.name}:</strong> ${data.comment}</p>`;
       });
     });
   </script>
-
 </body>
 </html>
