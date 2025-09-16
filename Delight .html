@@ -3,25 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public Comments</title>
+  <title>Delight Dental Care - Public Comments</title>
+  <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/008080/tooth.png"> <!-- Favicon -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background: #008080;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    header a {
+      display: inline-block;
+      margin-top: 8px;
+      background: white;
+      color: #008080 !important;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    header a:hover {
+      background: #f1f1f1;
+    }
+    main {
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    form {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    button {
+      background: #008080;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #006666;
+    }
+    .comment {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .comment strong {
+      color: #008080;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: gray;
+    }
+    .actions {
+      margin-top: 8px;
+    }
+    .actions button {
+      background: transparent;
+      border: none;
+      color: #008080;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .actions button:hover {
+      text-decoration: underline;
+    }
+    .replies {
+      margin-left: 20px;
+      margin-top: 10px;
+      border-left: 2px solid #eee;
+      padding-left: 10px;
+    }
+    .reply-form {
+      margin-top: 8px;
+    }
+    .reply-form input, .reply-form textarea {
+      width: 95%;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <h2>Leave a Comment</h2>
-  <form id="commentForm">
-    <input type="text" id="name" placeholder="Your Name" required>
-    <br><br>
-    <textarea id="comment" placeholder="Your Comment" required></textarea>
-    <br><br>
-    <button type="submit">Post Comment</button>
-  </form>
+  <header>
+    🦷 Delight Dental Care - Public Comments <br>
+    <a href="https://yourusername.github.io/yourrepo/">⬅ Back to Home</a>
+  </header>
 
-  <h2>Public Comments</h2>
-  <div id="commentsList"></div>
+  <main>
+    <h2>Leave a Comment</h2>
+    <form id="commentForm">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <textarea id="comment" rows="4" placeholder="Write your comment..." required></textarea>
+      <button type="submit">Post Comment</button>
+    </form>
+
+    <h2>Public Comments</h2>
+    <div id="commentsList"></div>
+  </main>
 
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, increment } 
+      from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
@@ -35,7 +142,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Save comments
+    // Handle main comment submit
     document.getElementById("commentForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value;
@@ -45,7 +152,8 @@
         await addDoc(collection(db, "comments"), {
           name,
           comment,
-          timestamp: new Date()
+          likes: 0,
+          timestamp: serverTimestamp()
         });
 
         document.getElementById("name").value = "";
@@ -53,16 +161,90 @@
       }
     });
 
-    // Show comments in real-time
+    // Display comments in real-time
     const q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
       let commentsDiv = document.getElementById("commentsList");
       commentsDiv.innerHTML = "";
-      snapshot.forEach((doc) => {
-        let data = doc.data();
-        commentsDiv.innerHTML += `<p><strong>${data.name}:</strong> ${data.comment}</p>`;
+      snapshot.forEach((docSnap) => {
+        let data = docSnap.data();
+        let time = data.timestamp?.toDate().toLocaleString() || "Just now";
+
+        let commentHTML = `
+          <div class="comment" id="comment-${docSnap.id}">
+            <strong>${data.name}</strong>
+            <p>${data.comment}</p>
+            <p class="meta">${time}</p>
+            <div class="actions">
+              <button onclick="likeComment('${docSnap.id}')">👍 Like (${data.likes || 0})</button>
+              <button onclick="toggleReplyForm('${docSnap.id}')">💬 Reply</button>
+            </div>
+            <div class="reply-form" id="reply-form-${docSnap.id}" style="display:none;">
+              <input type="text" id="reply-name-${docSnap.id}" placeholder="Your Name" />
+              <textarea id="reply-text-${docSnap.id}" rows="2" placeholder="Write a reply..."></textarea>
+              <button onclick="submitReply('${docSnap.id}')">Post Reply</button>
+            </div>
+            <div class="replies" id="replies-${docSnap.id}"></div>
+          </div>
+        `;
+
+        commentsDiv.innerHTML += commentHTML;
+
+        // Load replies for each comment
+        loadReplies(docSnap.id);
       });
     });
+
+    // Like a comment
+    window.likeComment = async (id) => {
+      const commentRef = doc(db, "comments", id);
+      await updateDoc(commentRef, {
+        likes: increment(1)
+      });
+    };
+
+    // Toggle reply form
+    window.toggleReplyForm = (id) => {
+      let form = document.getElementById("reply-form-" + id);
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    };
+
+    // Submit reply
+    window.submitReply = async (commentId) => {
+      const name = document.getElementById("reply-name-" + commentId).value;
+      const replyText = document.getElementById("reply-text-" + commentId).value;
+
+      if (name && replyText) {
+        await addDoc(collection(db, "comments", commentId, "replies"), {
+          name,
+          reply: replyText,
+          timestamp: serverTimestamp()
+        });
+
+        document.getElementById("reply-name-" + commentId).value = "";
+        document.getElementById("reply-text-" + commentId).value = "";
+      }
+    };
+
+    // Load replies
+    function loadReplies(commentId) {
+      const repliesQuery = query(collection(db, "comments", commentId, "replies"), orderBy("timestamp", "asc"));
+      onSnapshot(repliesQuery, (snapshot) => {
+        let repliesDiv = document.getElementById("replies-" + commentId);
+        repliesDiv.innerHTML = "";
+        snapshot.forEach((replyDoc) => {
+          let replyData = replyDoc.data();
+          let time = replyData.timestamp?.toDate().toLocaleString() || "Just now";
+          repliesDiv.innerHTML += `
+            <div class="comment reply">
+              <strong>${replyData.name}</strong>
+              <p>${replyData.reply}</p>
+              <p class="meta">${time}</p>
+            </div>
+          `;
+        });
+      });
+    }
   </script>
 </body>
 </html>
