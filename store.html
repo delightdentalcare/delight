@@ -120,3 +120,91 @@ window.uploadProduct = async function() {
   if(!file || !name || !price || !desc){
     alert("Fill all fields and select an image!");
     return;
+  }
+
+  try{
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+      method:"POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if(data.secure_url){
+      const imageUrl = data.secure_url;
+      await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
+      alert("🎉 Product uploaded successfully!");
+      document.getElementById("productImage").value="";
+      document.getElementById("productName").value="";
+      document.getElementById("productPrice").value="";
+      document.getElementById("productDesc").value="";
+      loadProducts();
+    } else {
+      console.error("Cloudinary upload failed:", data);
+      alert("Upload failed. Check console for details.");
+    }
+
+  } catch(err){
+    console.error("Upload error:", err);
+    alert("Upload error! Check console for details.");
+  }
+};
+
+// Load products
+async function loadProducts(){
+  allProducts=[];
+  const snapshot = await getDocs(collection(db,"products"));
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    data.id = docSnap.id;
+    allProducts.push(data);
+  });
+  displayProducts('All');
+}
+
+// Display products
+function displayProducts(category){
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML="";
+  allProducts.forEach(p=>{
+    if(category!=='All' && p.category!==category) return;
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <img src="${p.imageUrl}" alt="${p.name}">
+      <div class="card-content">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <p class="price">₦${p.price}</p>
+      </div>
+      <div class="contact-btns">
+        <a class="call" href="tel:+2347060809088">📞 Call</a>
+        <a class="whatsapp" href="https://wa.me/2347060809088?text=I want ${encodeURIComponent(p.name)}">💬 WhatsApp</a>
+      </div>
+      <div class="admin-btns">
+        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// Delete product
+window.deleteProduct = async function(id){
+  if(confirm("Delete this product?")){
+    await deleteDoc(doc(db,"products",id));
+    loadProducts();
+  }
+};
+
+// Filter category
+window.filterCategory = function(cat){ displayProducts(cat); };
+
+// Initial load
+loadProducts();
+</script>
+</body>
+</html>
