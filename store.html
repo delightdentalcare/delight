@@ -30,8 +30,9 @@ nav a:hover { text-decoration:underline; }
 .whatsapp:hover { background:#1ebe5c; }
 .call:hover { background:#006666; }
 .admin-btns { margin-top:10px; text-align:center; }
-.admin-btns button { margin:5px; padding:6px 12px; border:none; border-radius:5px; background:#FF6347; color:white; cursor:pointer; }
-.admin-btns button.edit { background:#008080; }
+.admin-btns button { margin:5px; padding:6px 12px; border:none; border-radius:5px; cursor:pointer; }
+.admin-btns button.edit { background:#008080; color:white; }
+.admin-btns button.delete { background:#FF6347; color:white; }
 #adminPanel { display:none; padding:30px; background:#f9f9f9; justify-content:center; margin-bottom:50px; }
 .admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; width:100%; }
 #loginPanel { text-align:center; margin:30px; }
@@ -51,12 +52,12 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 <div class="container">
 <h2 style="text-align:center;color:#008080;">🛍️ Our Products</h2>
 <div id="categoryMenu">
-<button onclick="filterProducts('All')">All</button>
-<button onclick="filterProducts('Toothpaste')">Toothpaste</button>
-<button onclick="filterProducts('Mouthwash')">Mouthwash</button>
-<button onclick="filterProducts('Whitening')">Whitening</button>
-<button onclick="filterProducts('Dental Tools')">Dental Tools</button>
-<button onclick="filterProducts('Others')">Others</button>
+<button onclick="displayProducts('All')">All</button>
+<button onclick="displayProducts('Toothpaste')">Toothpaste</button>
+<button onclick="displayProducts('Mouthwash')">Mouthwash</button>
+<button onclick="displayProducts('Whitening')">Whitening</button>
+<button onclick="displayProducts('Dental Tools')">Dental Tools</button>
+<button onclick="displayProducts('Others')">Others</button>
 </div>
 <div id="productGrid" class="product-grid"></div>
 </div>
@@ -96,6 +97,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebas
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
   authDomain: "delight-program.firebaseapp.com",
@@ -114,10 +116,10 @@ let allProducts = [];
 // Admin Login
 window.checkPassword = function(){
   const input = document.getElementById("adminPassword").value;
-  if(input === password){
-    document.getElementById("loginPanel").style.display = "none";
-    document.getElementById("adminPanel").style.display = "flex";
-    loadProducts(); // Load products with admin buttons
+  if(input===password){
+    document.getElementById("loginPanel").style.display="none";
+    document.getElementById("adminPanel").style.display="flex";
+    loadProducts();
   } else { alert("Wrong password!"); }
 }
 
@@ -176,4 +178,71 @@ window.updateProduct = async function(){
     imageUrl = await getDownloadURL(storageRef);
   }
 
-  const productRef
+  const productRef = doc(db, "products", id);
+  const updateData = {name, price, desc, category};
+  if(imageUrl) updateData.imageUrl = imageUrl;
+
+  await updateDoc(productRef, updateData);
+  alert("Product updated!");
+  clearForm();
+  loadProducts();
+}
+
+// Clear form
+function clearForm(){
+  document.getElementById("productName").value="";
+  document.getElementById("productPrice").value="";
+  document.getElementById("productDesc").value="";
+  document.getElementById("productCategory").value="Toothpaste";
+  document.getElementById("productImage").value="";
+  document.getElementById("uploadBtn").style.display="inline-block";
+  document.getElementById("updateBtn").style.display="none";
+  document.getElementById("editProductId").value="";
+}
+
+// Load products
+async function loadProducts(){
+  const snapshot = await getDocs(collection(db,"products"));
+  allProducts=[];
+  snapshot.forEach(docSnap => { 
+    let data = docSnap.data();
+    data.id = docSnap.id;
+    allProducts.push(data);
+  });
+  displayProducts("All");
+}
+
+// Display products
+function displayProducts(category){
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML="";
+  const filtered = category==="All"? allProducts : allProducts.filter(p=>p.category===category);
+  filtered.forEach(p=>{
+    let adminButtons = '';
+    if(document.getElementById("adminPanel").style.display==="flex"){
+      adminButtons = `
+      <div class="admin-btns">
+      <button class="edit" onclick='editProduct(${JSON.stringify(p)})'>Edit</button>
+      <button class="delete" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>`;
+    }
+    grid.innerHTML += `
+      <div class="card">
+        <img src="${p.imageUrl}" alt="${p.name}">
+        <div class="card-content">
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <p class="price">₦${p.price}</p>
+          <small style="color:gray;">Category: ${p.category}</small>
+        </div>
+        <div class="contact-btns">
+          <a class="call" href="tel:+2347060809088">📞 Call</a>
+          <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
+        </div>
+        ${adminButtons}
+      </div>`;
+  });
+}
+</script>
+</body>
+</html>
