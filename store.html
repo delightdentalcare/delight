@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delight Dental Care - Store</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon"><!-- Place your favicon/logo here -->
+<link rel="icon" href="favicon.ico" type="image/x-icon"><!-- Replace favicon.ico with your logo -->
 <style>
 body { font-family: Arial, sans-serif; margin:0; background:#f9f9f9; color:#333; }
 header { background:#008080; color:white; padding:15px; text-align:center; font-size:1.5rem; font-weight:bold; }
@@ -36,7 +36,10 @@ nav a:hover { text-decoration:underline; }
 #adminPanel { display:none; padding:30px; background:#f9f9f9; justify-content:center; margin-bottom:50px; }
 .admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; width:100%; }
 #loginPanel { text-align:center; margin:30px; }
+.reviews-section { background:#f1f1f1; padding:10px; border-radius:8px; margin-top:10px; text-align:left; }
 footer { background:#008080; color:white; text-align:center; padding:15px; margin-top:30px; }
+input, textarea, select { width:100%; padding:8px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
+button { cursor:pointer; }
 </style>
 </head>
 <body>
@@ -73,10 +76,10 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 <div id="adminPanel">
 <div class="admin-box">
 <h2>📦 Add / Edit Product</h2>
-<input type="file" id="productImage" accept="image/*"><br><br>
-<input type="text" id="productName" placeholder="Product name"><br><br>
-<input type="text" id="productPrice" placeholder="Price"><br><br>
-<textarea id="productDesc" placeholder="Description"></textarea><br><br>
+<input type="file" id="productImage" accept="image/*"><br>
+<input type="text" id="productName" placeholder="Product name"><br>
+<input type="text" id="productPrice" placeholder="Price"><br>
+<textarea id="productDesc" placeholder="Description"></textarea><br>
 <select id="productCategory">
 <option value="Toothpaste">Toothpaste</option>
 <option value="Mouthwash">Mouthwash</option>
@@ -94,10 +97,10 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
-// Firebase configuration
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
   authDomain: "delight-program.firebaseapp.com",
@@ -113,7 +116,7 @@ const storage = getStorage(app);
 const password = "mubsbatir";
 let allProducts = [];
 
-// Admin Login
+// Admin login
 window.checkPassword = function(){
   const input = document.getElementById("adminPassword").value;
   if(input===password){
@@ -130,22 +133,16 @@ window.uploadProduct = async function(){
   const price = document.getElementById("productPrice").value;
   const desc = document.getElementById("productDesc").value;
   const category = document.getElementById("productCategory").value;
-
   if(!file || !name || !price || !desc){ alert("Please fill all fields"); return; }
-
   try{
     const storageRef = ref(storage, "products/"+Date.now()+"_"+file.name);
     await uploadBytes(storageRef, file);
     const imageUrl = await getDownloadURL(storageRef);
-
     await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl});
     alert("Product uploaded successfully!");
     clearForm();
     loadProducts();
-  } catch(err){
-    console.error(err);
-    alert("Upload failed. Check Firebase rules and network.");
-  }
+  } catch(err){ console.error(err); alert("Upload failed. Check Firebase rules and network."); }
 }
 
 // Delete Product
@@ -175,18 +172,15 @@ window.updateProduct = async function(){
   const desc = document.getElementById("productDesc").value;
   const category = document.getElementById("productCategory").value;
   const file = document.getElementById("productImage").files[0];
-
   let imageUrl;
   if(file){
     const storageRef = ref(storage, "products/"+Date.now()+"_"+file.name);
     await uploadBytes(storageRef, file);
     imageUrl = await getDownloadURL(storageRef);
   }
-
   const productRef = doc(db,"products",id);
   const updateData = {name, price, desc, category};
   if(imageUrl) updateData.imageUrl = imageUrl;
-
   await updateDoc(productRef, updateData);
   alert("Product updated successfully!");
   clearForm();
@@ -197,57 +191,4 @@ window.updateProduct = async function(){
 function clearForm(){
   document.getElementById("productName").value="";
   document.getElementById("productPrice").value="";
-  document.getElementById("productDesc").value="";
-  document.getElementById("productCategory").value="Toothpaste";
-  document.getElementById("productImage").value="";
-  document.getElementById("uploadBtn").style.display="inline-block";
-  document.getElementById("updateBtn").style.display="none";
-  document.getElementById("editProductId").value="";
-}
-
-// Load Products
-async function loadProducts(){
-  const snapshot = await getDocs(collection(db,"products"));
-  allProducts=[];
-  snapshot.forEach(docSnap => {
-    let data = docSnap.data();
-    data.id = docSnap.id;
-    allProducts.push(data);
-  });
-  displayProducts("All");
-}
-
-// Display Products
-function displayProducts(category){
-  const grid = document.getElementById("productGrid");
-  grid.innerHTML="";
-  const filtered = category==="All"? allProducts : allProducts.filter(p=>p.category===category);
-  filtered.forEach(p=>{
-    let adminButtons = '';
-    if(document.getElementById("adminPanel").style.display==="flex"){
-      adminButtons = `
-      <div class="admin-btns">
-      <button class="edit" onclick='editProduct(${JSON.stringify(p)})'>Edit</button>
-      <button class="delete" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>`;
-    }
-    grid.innerHTML += `
-      <div class="card">
-        <img src="${p.imageUrl}" alt="${p.name}">
-        <div class="card-content">
-          <h3>${p.name}</h3>
-          <p>${p.desc}</p>
-          <p class="price">₦${p.price}</p>
-          <small style="color:gray;">Category: ${p.category}</small>
-        </div>
-        <div class="contact-btns">
-          <a class="call" href="tel:+2347060809088">📞 Call</a>
-          <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
-        </div>
-        ${adminButtons}
-      </div>`;
-  });
-}
-</script>
-</body>
-</html>
+  document
