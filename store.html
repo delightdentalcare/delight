@@ -3,68 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Delight Dental Care - Store</title>
-<style>
-body { font-family: Arial,sans-serif; margin:0; background:#f9f9f9; }
-header { background:#008080; color:white; padding:20px; text-align:center; font-size:1.5rem; font-weight:bold; }
-nav { background:#006666; padding:10px; text-align:center; }
-nav a { color:white; text-decoration:none; margin:0 10px; font-weight:bold; }
-nav a:hover { text-decoration:underline; }
-.container { max-width:1200px; margin:0 auto; padding:20px; }
-#categoryMenu { text-align:center; margin:20px 0; }
-#categoryMenu button { padding:10px 20px; margin:5px; border:none; border-radius:5px; background:#008080; color:white; font-weight:bold; cursor:pointer; }
-#categoryMenu button:hover { background:#006666; }
-.product-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
-.card { background:white; border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.1); overflow:hidden; transition:transform 0.2s; }
-.card:hover { transform:scale(1.03); }
-.card img { width:100%; height:200px; object-fit:cover; }
-.card-content { padding:15px; text-align:center; }
-.card-content h3 { margin:10px 0; color:#008080; }
-.card-content p { font-size:0.9rem; margin:10px 0; }
-.price { font-weight:bold; color:#006666; margin:10px 0; }
-.contact-btns a { display:inline-block; padding:10px 15px; margin:5px; border-radius:6px; color:white; text-decoration:none; font-weight:bold; }
-.whatsapp { background:#25D366; }
-.call { background:#008080; }
-#adminPanel { display:none; padding:20px; background:#f9f9f9; }
-.admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; margin:0 auto; }
-</style>
+<title>Delight Dental Care Upload</title>
 </head>
 <body>
 
-<header>🦷 Delight Dental Care - Store</header>
-<nav>
-<a href="#">Home</a>
-<a href="#">Products</a>
-<a href="#">Reviews</a>
-<a href="#">Contact</a>
-</nav>
-
-<div class="container">
-<h2 style="text-align:center;color:#008080;">🛍️ Products</h2>
-<div id="categoryMenu">
-<button onclick="filterCategory('All')">All</button>
-<button onclick="filterCategory('Toothpaste')">Toothpaste</button>
-<button onclick="filterCategory('Mouthwash')">Mouthwash</button>
-<button onclick="filterCategory('Whitening')">Whitening</button>
-<button onclick="filterCategory('Dental Tools')">Dental Tools</button>
-<button onclick="filterCategory('Others')">Others</button>
-</div>
-<div id="productGrid" class="product-grid"></div>
-</div>
-
-<div id="loginPanel" style="text-align:center; margin:30px;">
-<h2>🔒 Admin Login</h2>
-<input type="password" id="adminPassword" placeholder="Enter password">
-<button onclick="checkPassword()" style="padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px;">Login</button>
-</div>
-
-<div id="adminPanel">
-<div class="admin-box">
-<h2>📦 Add Product</h2>
-<input type="file" id="productImage" accept="image/*"><br>
-<input type="text" id="productName" placeholder="Product name"><br>
-<input type="text" id="productPrice" placeholder="Price"><br>
-<textarea id="productDesc" placeholder="Description"></textarea><br>
+<h2>Upload Product</h2>
+<input type="file" id="productImage"><br><br>
+<input type="text" id="productName" placeholder="Product name"><br><br>
+<input type="text" id="productPrice" placeholder="Price"><br><br>
+<textarea id="productDesc" placeholder="Description"></textarea><br><br>
 <select id="productCategory">
 <option value="Toothpaste">Toothpaste</option>
 <option value="Mouthwash">Mouthwash</option>
@@ -72,139 +19,49 @@ nav a:hover { text-decoration:underline; }
 <option value="Dental Tools">Dental Tools</option>
 <option value="Others">Others</option>
 </select><br><br>
-<button onclick="uploadProduct()" style="padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px;">Upload Product</button>
-</div>
-</div>
+<button onclick="uploadProduct()">Upload Product</button>
 
-<footer style="background:#008080; color:white; text-align:center; padding:15px; margin-top:30px;">&copy; 2025 Delight Dental Care</footer>
+<script>
+const CLOUD_NAME = "dderxvs7g";  // your Cloudinary cloud name
+const UPLOAD_PRESET = "Batir2";   // your unsigned preset
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-// Firebase config
-const firebaseConfig = { 
-  apiKey:"AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU", 
-  authDomain:"delight-program.firebaseapp.com", 
-  projectId:"delight-program" 
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Admin password
-const password = "mubsbatir";
-let allProducts = [];
-
-// Cloudinary config
-const CLOUD_NAME = "dderxvs7g";
-const UPLOAD_PRESET = "Batir2";
-
-// Admin login
-window.checkPassword = function(){
-  const input = document.getElementById("adminPassword").value;
-  if(input === password){
-    document.getElementById("loginPanel").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
-    loadProducts();
-  } else alert("Wrong password!");
-};
-
-// Upload product function (simplified, works)
-window.uploadProduct = async function() {
+async function uploadProduct() {
   const file = document.getElementById("productImage").files[0];
-  const name = document.getElementById("productName").value.trim();
-  const price = document.getElementById("productPrice").value.trim();
-  const desc = document.getElementById("productDesc").value.trim();
+  const name = document.getElementById("productName").value;
+  const price = document.getElementById("productPrice").value;
+  const desc = document.getElementById("productDesc").value;
   const category = document.getElementById("productCategory").value;
 
-  if(!file || !name || !price || !desc){
+  if (!file || !name || !price || !desc) {
     alert("Fill all fields and select an image!");
     return;
   }
 
-  try{
+  try {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
 
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
-      method:"POST",
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+      method: "POST",
       body: formData
     });
 
-    const data = await response.json();
-
-    if(data.secure_url){
-      const imageUrl = data.secure_url;
-      await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
-      alert("🎉 Product uploaded successfully!");
-      document.getElementById("productImage").value="";
-      document.getElementById("productName").value="";
-      document.getElementById("productPrice").value="";
-      document.getElementById("productDesc").value="";
-      loadProducts();
+    const data = await res.json();
+    if (data.secure_url) {
+      alert("Upload successful!\nImage URL: " + data.secure_url);
+      console.log(data); // you can copy this URL to store in Firestore if needed
     } else {
-      console.error("Cloudinary upload failed:", data);
-      alert("Upload failed. Check console for details.");
+      alert("Upload failed. Check console.");
+      console.error(data);
     }
 
-  } catch(err){
-    console.error("Upload error:", err);
-    alert("Upload error! Check console for details.");
+  } catch (err) {
+    alert("Error uploading. Check console.");
+    console.error(err);
   }
-};
-
-// Load products
-async function loadProducts(){
-  allProducts=[];
-  const snapshot = await getDocs(collection(db,"products"));
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    data.id = docSnap.id;
-    allProducts.push(data);
-  });
-  displayProducts('All');
 }
-
-// Display products
-function displayProducts(category){
-  const grid = document.getElementById("productGrid");
-  grid.innerHTML="";
-  allProducts.forEach(p=>{
-    if(category!=='All' && p.category!==category) return;
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-      <img src="${p.imageUrl}" alt="${p.name}">
-      <div class="card-content">
-        <h3>${p.name}</h3>
-        <p>${p.desc}</p>
-        <p class="price">₦${p.price}</p>
-      </div>
-      <div class="contact-btns">
-        <a class="call" href="tel:+2347060809088">📞 Call</a>
-        <a class="whatsapp" href="https://wa.me/2347060809088?text=I want ${encodeURIComponent(p.name)}">💬 WhatsApp</a>
-      </div>
-      <div class="admin-btns">
-        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-// Delete product
-window.deleteProduct = async function(id){
-  if(confirm("Delete this product?")){
-    await deleteDoc(doc(db,"products",id));
-    loadProducts();
-  }
-};
-
-// Filter category
-window.filterCategory = function(cat){ displayProducts(cat); };
-
-// Initial load
-loadProducts();
 </script>
+
 </body>
 </html>
