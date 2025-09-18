@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delight Dental Care - Store</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon"><!-- Replace favicon.ico with your logo -->
 <style>
-body { font-family: Arial,sans-serif; margin:0; background:#f9f9f9; color:#333; }
+body { font-family: Arial,sans-serif; margin:0; background:#f9f9f9; }
 header { background:#008080; color:white; padding:20px; text-align:center; font-size:1.5rem; font-weight:bold; }
 nav { background:#006666; padding:10px; text-align:center; }
-nav a { color:white; text-decoration:none; margin:0 15px; font-weight:bold; }
+nav a { color:white; text-decoration:none; margin:0 10px; font-weight:bold; }
 nav a:hover { text-decoration:underline; }
 .container { max-width:1200px; margin:0 auto; padding:20px; }
 #categoryMenu { text-align:center; margin:20px 0; }
@@ -22,38 +21,28 @@ nav a:hover { text-decoration:underline; }
 .card-content { padding:15px; text-align:center; }
 .card-content h3 { margin:10px 0; color:#008080; }
 .card-content p { font-size:0.9rem; margin:10px 0; }
-.price { font-size:1.1rem; font-weight:bold; color:#006666; margin:10px 0; }
-.contact-btns { text-align:center; padding:10px; }
+.price { font-weight:bold; color:#006666; margin:10px 0; }
 .contact-btns a { display:inline-block; padding:10px 15px; margin:5px; border-radius:6px; color:white; text-decoration:none; font-weight:bold; }
 .whatsapp { background:#25D366; }
 .call { background:#008080; }
-.whatsapp:hover { background:#1ebe5c; }
-.call:hover { background:#006666; }
-.review-section { margin-top:10px; text-align:left; font-size:0.9rem; }
-.review-section .stars { color:gold; font-size:1rem; }
-.admin-btns { margin-top:10px; text-align:center; }
-.admin-btns button { margin:5px; padding:6px 12px; border:none; border-radius:5px; cursor:pointer; }
-.admin-btns button.delete { background:#FF6347; color:white; }
-#adminPanel { display:none; padding:30px; background:#f9f9f9; justify-content:center; margin-bottom:50px; }
-.admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; width:100%; }
-#loginPanel { text-align:center; margin:30px; }
-input, textarea, select { width:100%; padding:8px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
-button { cursor:pointer; }
-footer { background:#008080; color:white; text-align:center; padding:15px; margin-top:30px; }
+#adminPanel { display:none; padding:20px; background:#f9f9f9; }
+.admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; margin:0 auto; }
+#uploadProgressContainer { display:none; margin-top:10px; background:#ccc; border-radius:5px; height:20px; }
+#uploadProgress { height:100%; width:0%; background:#008080; border-radius:5px; }
 </style>
 </head>
 <body>
 
-<header>🦷 Delight Dental Care - Online Store</header>
+<header>🦷 Delight Dental Care - Store</header>
 <nav>
-<a href="index.html">Home</a>
-<a href="store.html">Products</a>
-<a href="#reviews">Reviews</a>
-<a href="contact.html">Contact</a>
+<a href="#">Home</a>
+<a href="#">Products</a>
+<a href="#">Reviews</a>
+<a href="#">Contact</a>
 </nav>
 
 <div class="container">
-<h2 style="text-align:center;color:#008080;">🛍️ Our Products</h2>
+<h2 style="text-align:center;color:#008080;">🛍️ Products</h2>
 <div id="categoryMenu">
 <button onclick="filterCategory('All')">All</button>
 <button onclick="filterCategory('Toothpaste')">Toothpaste</button>
@@ -65,14 +54,12 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 <div id="productGrid" class="product-grid"></div>
 </div>
 
-<!-- Admin login -->
-<div id="loginPanel">
+<div id="loginPanel" style="text-align:center; margin:30px;">
 <h2>🔒 Admin Login</h2>
 <input type="password" id="adminPassword" placeholder="Enter password">
 <button onclick="checkPassword()" style="padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px;">Login</button>
 </div>
 
-<!-- Admin panel -->
 <div id="adminPanel">
 <div class="admin-box">
 <h2>📦 Add Product</h2>
@@ -87,75 +74,100 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 <option value="Dental Tools">Dental Tools</option>
 <option value="Others">Others</option>
 </select><br><br>
-<button id="uploadBtn" onclick="uploadProduct()" style="padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px;">Upload Product</button>
-<input type="hidden" id="editProductId">
+<button onclick="uploadProduct()" style="padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px;">Upload Product</button>
+
+<div id="uploadProgressContainer">
+  <div id="uploadProgress"></div>
+</div>
 </div>
 </div>
 
-<footer>&copy; 2025 Delight Dental Care | All Rights Reserved</footer>
+<footer style="background:#008080; color:white; text-align:center; padding:15px; margin-top:30px;">&copy; 2025 Delight Dental Care</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
-// Firebase config
-const firebaseConfig = {
-apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
-authDomain: "delight-program.firebaseapp.com",
-projectId: "delight-program",
-storageBucket: "delight-program.appspot.com",
-messagingSenderId: "972498440796",
-appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
-};
-
+// Firebase
+const firebaseConfig = { apiKey:"AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU", authDomain:"delight-program.firebaseapp.com", projectId:"delight-program" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const password = "mubsbatir";
 let allProducts = [];
 
+// Cloudinary
+const CLOUD_NAME = "dderxvs7g";
+const UPLOAD_PRESET = "Batir2";
+
 // Admin login
-window.checkPassword = async function(){
+window.checkPassword = function(){
   const input = document.getElementById("adminPassword").value;
   if(input === password){
     document.getElementById("loginPanel").style.display="none";
-    document.getElementById("adminPanel").style.display="flex";
+    document.getElementById("adminPanel").style.display="block";
     loadProducts();
-  } else { alert("Wrong password"); }
-}
+  } else alert("Wrong password!");
+};
 
-// Upload Product
+// Upload function
 window.uploadProduct = async function(){
   const file = document.getElementById("productImage").files[0];
-  const name = document.getElementById("productName").value;
-  const price = document.getElementById("productPrice").value;
-  const desc = document.getElementById("productDesc").value;
+  const name = document.getElementById("productName").value.trim();
+  const price = document.getElementById("productPrice").value.trim();
+  const desc = document.getElementById("productDesc").value.trim();
   const category = document.getElementById("productCategory").value;
-  if(!file || !name || !price || !desc){ alert("Fill all fields"); return; }
-  const storageRef = ref(storage, "products/"+Date.now()+"_"+file.name);
-  await uploadBytes(storageRef, file);
-  const imageUrl = await getDownloadURL(storageRef);
-  await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
-  alert("Product uploaded!");
-  clearForm();
-  loadProducts();
-}
+  const progressContainer = document.getElementById("uploadProgressContainer");
+  const progressBar = document.getElementById("uploadProgress");
 
-// Load Products
+  if(!file || !name || !price || !desc){ alert("Fill all fields!"); return; }
+
+  try {
+    progressContainer.style.display = "block";
+    progressBar.style.width = "0%";
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, true);
+
+    xhr.upload.onprogress = e => {
+      if(e.lengthComputable){
+        const percent = (e.loaded / e.total) * 100;
+        progressBar.style.width = percent + "%";
+      }
+    };
+
+    xhr.onload = async function(){
+      if(xhr.status === 200){
+        const res = JSON.parse(xhr.responseText);
+        const imageUrl = res.secure_url;
+        await addDoc(collection(db,"products"), { name, price, desc, category, imageUrl, reviews:[] });
+        alert("🎉 Product uploaded successfully!");
+        document.getElementById("productImage").value = "";
+        document.getElementById("productName").value = "";
+        document.getElementById("productPrice").value = "";
+        document.getElementById("productDesc").value = "";
+        progressContainer.style.display = "none";
+        loadProducts();
+      } else { alert("Upload failed!"); progressContainer.style.display="none"; }
+    };
+
+    xhr.send(formData);
+  } catch(e){ console.error(e); alert("Upload error!"); progressContainer.style.display="none"; }
+};
+
+// Load products
 async function loadProducts(){
   allProducts = [];
   const snapshot = await getDocs(collection(db,"products"));
-  snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-    data.id = docSnap.id;
-    allProducts.push(data);
-  });
+  snapshot.forEach(docSnap=>{ const data=docSnap.data(); data.id=docSnap.id; allProducts.push(data); });
   displayProducts('All');
 }
 
-// Display Products
+// Display
 function displayProducts(category){
   const grid = document.getElementById("productGrid");
   grid.innerHTML="";
@@ -163,55 +175,35 @@ function displayProducts(category){
     if(category!=='All' && p.category!==category) return;
     const card = document.createElement("div");
     card.className="card";
-    // Average rating
-    let starsHtml="";
-    if(p.reviews && p.reviews.length>0){
-      const avg = Math.round(p.reviews.reduce((a,b)=>a+b.rating,0)/p.reviews.length);
-      for(let i=0;i<avg;i++){ starsHtml+="⭐"; }
-    }
     card.innerHTML=`
       <img src="${p.imageUrl}" alt="${p.name}">
       <div class="card-content">
         <h3>${p.name}</h3>
         <p>${p.desc}</p>
         <p class="price">₦${p.price}</p>
-        <div class="review-section">
-          <span class="stars">${starsHtml}</span>
-          ${p.reviews && p.reviews.length>0 ? `(${p.reviews.length} reviews)` : '(No reviews)'}
-        </div>
       </div>
       <div class="contact-btns">
         <a class="call" href="tel:+2347060809088">📞 Call</a>
-        <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
-      </div>`;
-    if(document.getElementById("adminPanel").style.display==="flex"){
-      const adminBtns = document.createElement("div");
-      adminBtns.className="admin-btns";
-      adminBtns.innerHTML=`<button class="delete" onclick="deleteProduct('${p.id}')">Delete</button>`;
-      card.appendChild(adminBtns);
-    }
+        <a class="whatsapp" href="https://wa.me/2347060809088?text=I want ${encodeURIComponent(p.name)}">💬 WhatsApp</a>
+      </div>
+      <div class="admin-btns">
+        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
+      </div>
+    `;
     grid.appendChild(card);
   });
 }
 
-// Delete product
+// Delete
 window.deleteProduct = async function(id){
-  if(confirm("Delete this product?")){
-    await deleteDoc(doc(db,"products",id));
-    loadProducts();
-  }
-}
+  if(confirm("Delete this product?")){ await deleteDoc(doc(db,"products",id)); loadProducts(); }
+};
 
-// Filter Category
-window.filterCategory = function(cat){ displayProducts(cat); }
+// Filter
+window.filterCategory = function(cat){ displayProducts(cat); };
 
-function clearForm(){
-  document.getElementById("productName").value="";
-  document.getElementById("productPrice").value="";
-  document.getElementById("productDesc").value="";
-  document.getElementById("productImage").value="";
-}
+// Initial load
+loadProducts();
 </script>
-
 </body>
 </html>
