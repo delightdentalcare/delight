@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delight Dental Care - Products</title>
+
+  <!-- 🦷 Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background: #008080;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    header img {
+      height: 50px;
+      border-radius: 50%;
+    }
+    nav {
+      background: #006666;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #008080;
+      margin-top: 30px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+    .controls input, .controls select {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 15px;
+      text-align: center;
+    }
+    .card-content h3 {
+      margin: 10px 0;
+      color: #008080;
+    }
+    .card-content p {
+      font-size: 0.9rem;
+      margin: 10px 0;
+    }
+    .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #006666;
+      margin: 10px 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background: #008080;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #006666;
+    }
+    .reviews-section {
+      margin-top: 15px;
+      text-align: left;
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .reviews-section h4 {
+      margin-bottom: 10px;
+      color: #008080;
+    }
+    .reviews-list {
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    .review-form input,
+    .review-form select,
+    .review-form textarea {
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+    .review-form button {
+      width: 100%;
+    }
+    footer {
+      background: #008080;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="logo.png" alt="Delight Dental Care Logo">
+    🦷 Delight Dental Care - Our Products
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="comments.html">Public Comments</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <!-- 🔍 Search & Filter -->
+  <h2 class="section-title">🛍️ Shop Our Products</h2>
+  <div class="controls">
+    <input type="text" id="searchBar" placeholder="Search for a product...">
+    <select id="categoryFilter">
+      <option value="all">All Categories</option>
+      <option value="toothpaste">Toothpaste</option>
+      <option value="mouthwash">Mouthwash</option>
+      <option value="floss">Floss</option>
+      <option value="toothbrush">Toothbrush</option>
+      <option value="whitener">Whitening</option>
+      <option value="kids">Kids Products</option>
+      <option value="gumcare">Gum Care</option>
+      <option value="others">Others</option>
+    </select>
+  </div>
+
+  <!-- 🛒 Catalog -->
+  <main class="container" id="productContainer"></main>
+
+  <!-- 🔑 Admin Panel -->
+  <section id="adminPanel" style="display:none; padding:20px; text-align:center;">
+    <h2>Admin: Add New Product</h2>
+    <form id="productForm">
+      <input type="text" id="productName" placeholder="Product Name" required><br>
+      <textarea id="productDescription" placeholder="Description" required></textarea><br>
+      <input type="number" id="productPrice" placeholder="Price (₦)" required><br>
+      <select id="productCategory" required>
+        <option value="toothpaste">Toothpaste</option>
+        <option value="mouthwash">Mouthwash</option>
+        <option value="floss">Floss</option>
+        <option value="toothbrush">Toothbrush</option>
+        <option value="whitener">Whitening</option>
+        <option value="kids">Kids Products</option>
+        <option value="gumcare">Gum Care</option>
+        <option value="others">Others</option>
+      </select><br>
+      <input type="text" id="productImage" placeholder="Image URL (e.g. toothpaste.jpg)" required><br>
+      <button type="submit" class="btn">Add Product</button>
+    </form>
+    <button onclick="logout()" class="btn" style="margin-top:10px; background:#b22222;">Logout</button>
+  </section>
+
+  <!-- 🔑 Admin Login -->
+  <section id="loginPanel" style="text-align:center; padding:20px;">
+    <h2>Admin Login</h2>
+    <input type="password" id="adminPassword" placeholder="Enter Password">
+    <button onclick="login()" class="btn">Login</button>
+  </section>
+
+  <footer>
+    &copy; 2025 Delight Dental Care | All Rights Reserved
+  </footer>
+
+  <!-- ✅ Firebase & Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
+      authDomain: "delight-program.firebaseapp.com",
+      projectId: "delight-program",
+      storageBucket: "delight-program.firebasestorage.app",
+      messagingSenderId: "972498440796",
+      appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let loggedIn = false;
+
+    // ✅ Admin login
+    function login() {
+      const password = document.getElementById("adminPassword").value;
+      if (password === "mubsbatir") {
+        loggedIn = true;
+        document.getElementById("adminPanel").style.display = "block";
+        document.getElementById("loginPanel").style.display = "none";
+        loadProducts();
+      } else {
+        alert("Wrong password!");
+      }
+    }
+    window.login = login;
+
+    function logout() {
+      loggedIn = false;
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("loginPanel").style.display = "block";
+    }
+    window.logout = logout;
+
+    // ✅ Add Product
+    document.getElementById("productForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("productName").value;
+      const description = document.getElementById("productDescription").value;
+      const price = document.getElementById("productPrice").value;
+      const category = document.getElementById("productCategory").value;
+      const image = document.getElementById("productImage").value;
+
+      await addDoc(collection(db, "products"), { name, description, price, category, image });
+      alert("✅ Product added!");
+      e.target.reset();
+      loadProducts();
+    });
+
+    // ✅ Delete Product
+    async function deleteProduct(id) {
+      await deleteDoc(doc(db, "products", id));
+      loadProducts();
+    }
+    window.deleteProduct = deleteProduct;
+
+    // ✅ Submit Review
+    async function submitReview(event, productId) {
+      event.preventDefault();
+      const form = event.target;
+      const name = form.querySelector("input").value;
+      const rating = form.querySelector("select").value;
+      const comment = form.querySelector("textarea").value;
+
+      await addDoc(collection(db, "products", productId, "reviews"), {
+        name,
+        rating: parseInt(rating),
+        comment,
+        date: new Date().toISOString()
+      });
+
+      form.reset();
+      loadReviews(productId);
+    }
+    window.submitReview = submitReview;
+
+    // ✅ Load Reviews
+    async function loadReviews(productId) {
+      const reviewsList = document.querySelector(`#reviews-${productId} .reviews-list`);
+      reviewsList.innerHTML = "Loading...";
+
+      const querySnapshot = await getDocs(collection(db, "products", productId, "reviews"));
+      reviewsList.innerHTML = "";
+
+      let total = 0, count = 0;
+
+      querySnapshot.forEach(doc => {
+        const r = doc.data();
+        total += r.rating;
+        count++;
+
+        const reviewDiv = document.createElement("div");
+        reviewDiv.classList.add("review");
+        reviewDiv.innerHTML = `
+          <p><strong>${r.name}</strong> - ${"⭐".repeat(r.rating)}</p>
+          <p>${r.comment}</p>
+          <small>${new Date(r.date).toLocaleDateString()}</small>
+          <hr>
+        `;
+        reviewsList.appendChild(reviewDiv);
+      });
+
+      if (count > 0) {
+        const avg = (total / count).toFixed(1);
+        reviewsList.insertAdjacentHTML("afterbegin", `<p><strong>Average Rating:</strong> ⭐ ${avg}/5</p><hr>`);
+      } else {
+        reviewsList.innerHTML = "<p>No reviews yet. Be the first!</p>";
+      }
+    }
+
+    // ✅ Load Products
+    async function loadProducts() {
+      const container = document.getElementById("productContainer");
+      container.innerHTML = "Loading...";
+
+      const querySnapshot = await getDocs(collection(db, "products"));
+      container.innerHTML = "";
+
+      querySnapshot.forEach((docSnap) => {
+        const product = docSnap.data();
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.setAttribute("data-category", product.category);
+
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <div class="card-content">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <div class="price">₦${product.price}</div>
+
+            <!-- 🟢 Contact Buttons -->
+            <div style="margin:10px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+              <a href="tel:07060809088" class="btn">📞 Call Now</a>
+              <a href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(product.name)}" 
+                 class="btn">💬 WhatsApp</a>
+            </div>
+
+            ${loggedIn ? `<button onclick="deleteProduct('${docSnap.id}')" class="btn" style="background:#b22222;">❌ Delete</button>` : ""}
+
+            <!-- 🟢 Reviews Section -->
+            <div class="reviews-section" id="reviews-${docSnap.id}">
+              <h4>Customer Reviews</h4>
+              <div class="reviews-list"></div>
+
+              <form class="review-form" onsubmit="submitReview(event, '${docSnap.id}')">
+                <input type="text" placeholder="Your name" required>
+                <select required>
+                  <option value="">Rating</option>
+                  <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                  <option value="4">⭐⭐⭐⭐ (4)</option>
+                  <option value="3">⭐⭐⭐ (3)</option>
+                  <option value="2">⭐⭐ (2)</option>
+                  <option value="1">⭐ (1)</option>
+                </select>
+                <textarea placeholder="Write your review..." required></textarea>
+                <button type="submit" class="btn">Submit Review</button>
+              </form>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+        loadReviews(docSnap.id);
+      });
+    }
+
+    loadProducts();
+
+    // ✅ Search & Filter
+    const searchBar = document.getElementById('searchBar');
+    const categoryFilter = document.getElementById('categoryFilter');
+
+    function filterProducts() {
+      const searchText = searchBar.value.toLowerCase();
+      const category = categoryFilter.value;
+      document.querySelectorAll('.card').forEach(product => {
+        const name = product.querySelector('h3').innerText.toLowerCase();
+        const productCategory = product.getAttribute('data-category');
+        const matchesSearch = name.includes(searchText);
+        const matchesCategory = (category === 'all' || category === productCategory);
+        product.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+      });
+    }
+
+    searchBar.addEventListener('input', filterProducts);
+    categoryFilter.addEventListener('change', filterProducts);
+  </script>
+</body>
+</html>
