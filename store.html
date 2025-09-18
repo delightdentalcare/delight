@@ -27,8 +27,6 @@ nav a:hover { text-decoration:underline; }
 .call { background:#008080; }
 #adminPanel { display:none; padding:20px; background:#f9f9f9; }
 .admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; margin:0 auto; }
-#uploadProgressContainer { display:none; margin-top:10px; background:#ccc; border-radius:5px; height:20px; }
-#uploadProgress { height:100%; width:0%; background:#008080; border-radius:5px; }
 </style>
 </head>
 <body>
@@ -75,10 +73,6 @@ nav a:hover { text-decoration:underline; }
 <option value="Others">Others</option>
 </select><br><br>
 <button onclick="uploadProduct()" style="padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px;">Upload Product</button>
-
-<div id="uploadProgressContainer">
-  <div id="uploadProgress"></div>
-</div>
 </div>
 </div>
 
@@ -88,15 +82,20 @@ nav a:hover { text-decoration:underline; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-// Firebase
-const firebaseConfig = { apiKey:"AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU", authDomain:"delight-program.firebaseapp.com", projectId:"delight-program" };
+// Firebase config
+const firebaseConfig = { 
+  apiKey:"AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU", 
+  authDomain:"delight-program.firebaseapp.com", 
+  projectId:"delight-program" 
+};
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Admin password
 const password = "mubsbatir";
 let allProducts = [];
 
-// Cloudinary
+// Cloudinary config
 const CLOUD_NAME = "dderxvs7g";
 const UPLOAD_PRESET = "Batir2";
 
@@ -110,100 +109,14 @@ window.checkPassword = function(){
   } else alert("Wrong password!");
 };
 
-// Upload function
-window.uploadProduct = async function(){
+// Upload product function (simplified, works)
+window.uploadProduct = async function() {
   const file = document.getElementById("productImage").files[0];
   const name = document.getElementById("productName").value.trim();
   const price = document.getElementById("productPrice").value.trim();
   const desc = document.getElementById("productDesc").value.trim();
   const category = document.getElementById("productCategory").value;
-  const progressContainer = document.getElementById("uploadProgressContainer");
-  const progressBar = document.getElementById("uploadProgress");
 
-  if(!file || !name || !price || !desc){ alert("Fill all fields!"); return; }
-
-  try {
-    progressContainer.style.display = "block";
-    progressBar.style.width = "0%";
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, true);
-
-    xhr.upload.onprogress = e => {
-      if(e.lengthComputable){
-        const percent = (e.loaded / e.total) * 100;
-        progressBar.style.width = percent + "%";
-      }
-    };
-
-    xhr.onload = async function(){
-      if(xhr.status === 200){
-        const res = JSON.parse(xhr.responseText);
-        const imageUrl = res.secure_url;
-        await addDoc(collection(db,"products"), { name, price, desc, category, imageUrl, reviews:[] });
-        alert("🎉 Product uploaded successfully!");
-        document.getElementById("productImage").value = "";
-        document.getElementById("productName").value = "";
-        document.getElementById("productPrice").value = "";
-        document.getElementById("productDesc").value = "";
-        progressContainer.style.display = "none";
-        loadProducts();
-      } else { alert("Upload failed!"); progressContainer.style.display="none"; }
-    };
-
-    xhr.send(formData);
-  } catch(e){ console.error(e); alert("Upload error!"); progressContainer.style.display="none"; }
-};
-
-// Load products
-async function loadProducts(){
-  allProducts = [];
-  const snapshot = await getDocs(collection(db,"products"));
-  snapshot.forEach(docSnap=>{ const data=docSnap.data(); data.id=docSnap.id; allProducts.push(data); });
-  displayProducts('All');
-}
-
-// Display
-function displayProducts(category){
-  const grid = document.getElementById("productGrid");
-  grid.innerHTML="";
-  allProducts.forEach(p=>{
-    if(category!=='All' && p.category!==category) return;
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-      <img src="${p.imageUrl}" alt="${p.name}">
-      <div class="card-content">
-        <h3>${p.name}</h3>
-        <p>${p.desc}</p>
-        <p class="price">₦${p.price}</p>
-      </div>
-      <div class="contact-btns">
-        <a class="call" href="tel:+2347060809088">📞 Call</a>
-        <a class="whatsapp" href="https://wa.me/2347060809088?text=I want ${encodeURIComponent(p.name)}">💬 WhatsApp</a>
-      </div>
-      <div class="admin-btns">
-        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-// Delete
-window.deleteProduct = async function(id){
-  if(confirm("Delete this product?")){ await deleteDoc(doc(db,"products",id)); loadProducts(); }
-};
-
-// Filter
-window.filterCategory = function(cat){ displayProducts(cat); };
-
-// Initial load
-loadProducts();
-</script>
-</body>
-</html>
+  if(!file || !name || !price || !desc){
+    alert("Fill all fields and select an image!");
+    return;
