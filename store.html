@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delight Dental Care - Store</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="icon" href="favicon.ico" type="image/x-icon"><!-- Place your favicon/logo here -->
 <style>
 body { font-family: Arial, sans-serif; margin:0; background:#f9f9f9; color:#333; }
 header { background:#008080; color:white; padding:15px; text-align:center; font-size:1.5rem; font-weight:bold; }
@@ -97,7 +97,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebas
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
-// Firebase config
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
   authDomain: "delight-program.firebaseapp.com",
@@ -131,16 +131,21 @@ window.uploadProduct = async function(){
   const desc = document.getElementById("productDesc").value;
   const category = document.getElementById("productCategory").value;
 
-  if(!file || !name || !price){ alert("Fill all fields"); return; }
+  if(!file || !name || !price || !desc){ alert("Please fill all fields"); return; }
 
-  const storageRef = ref(storage, "products/"+Date.now()+"_"+file.name);
-  await uploadBytes(storageRef, file);
-  const imageUrl = await getDownloadURL(storageRef);
+  try{
+    const storageRef = ref(storage, "products/"+Date.now()+"_"+file.name);
+    await uploadBytes(storageRef, file);
+    const imageUrl = await getDownloadURL(storageRef);
 
-  await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl});
-  alert("Product uploaded!");
-  clearForm();
-  loadProducts();
+    await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl});
+    alert("Product uploaded successfully!");
+    clearForm();
+    loadProducts();
+  } catch(err){
+    console.error(err);
+    alert("Upload failed. Check Firebase rules and network.");
+  }
 }
 
 // Delete Product
@@ -178,12 +183,12 @@ window.updateProduct = async function(){
     imageUrl = await getDownloadURL(storageRef);
   }
 
-  const productRef = doc(db, "products", id);
+  const productRef = doc(db,"products",id);
   const updateData = {name, price, desc, category};
   if(imageUrl) updateData.imageUrl = imageUrl;
 
   await updateDoc(productRef, updateData);
-  alert("Product updated!");
+  alert("Product updated successfully!");
   clearForm();
   loadProducts();
 }
@@ -200,11 +205,11 @@ function clearForm(){
   document.getElementById("editProductId").value="";
 }
 
-// Load products
+// Load Products
 async function loadProducts(){
   const snapshot = await getDocs(collection(db,"products"));
   allProducts=[];
-  snapshot.forEach(docSnap => { 
+  snapshot.forEach(docSnap => {
     let data = docSnap.data();
     data.id = docSnap.id;
     allProducts.push(data);
@@ -212,7 +217,7 @@ async function loadProducts(){
   displayProducts("All");
 }
 
-// Display products
+// Display Products
 function displayProducts(category){
   const grid = document.getElementById("productGrid");
   grid.innerHTML="";
