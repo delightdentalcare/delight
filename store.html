@@ -125,13 +125,11 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 
 <footer>&copy; 2025 Delight Dental Care | All Rights Reserved</footer>
 
-<!-- Firebase + App Script -->
+<!-- Firebase Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
-    from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-  // Firebase config (Firestore)
   const firebaseConfig = {
     apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
     authDomain: "delight-program.firebaseapp.com",
@@ -141,7 +139,6 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
     appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
   };
 
-  // Init Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
@@ -178,15 +175,10 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 
     if(!imageUrl || !name || !price || !desc){ alert("Fill all fields"); return; }
 
-    try {
-      await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
-      alert("Product added!");
-      clearForm();
-      loadProducts();
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Error adding product: " + error.message);
-    }
+    await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
+    alert("Product added!");
+    clearForm();
+    loadProducts();
   }
   window.uploadProduct = uploadProduct;
 
@@ -254,13 +246,8 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
   // Delete product
   async function deleteProduct(id){
     if(confirm("Delete this product?")){
-      try {
-        await deleteDoc(doc(db,"products",id));
-        loadProducts();
-      } catch (error) {
-        console.error("Delete failed:", error);
-        alert("Error deleting: " + error.message);
-      }
+      await deleteDoc(doc(db,"products",id));
+      loadProducts();
     }
   }
   window.deleteProduct = deleteProduct;
