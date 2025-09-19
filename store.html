@@ -125,142 +125,152 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 
 <footer>&copy; 2025 Delight Dental Care | All Rights Reserved</footer>
 
-<!-- 🔥 Firebase + Store Script -->
+<!-- Firebase + App Script -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } 
+    from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-// Firebase config (NEW project)
-const firebaseConfig = {
-  apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
-  authDomain: "delight-program.firebaseapp.com",
-  databaseURL: "https://delight-program-default-rtdb.firebaseio.com",
-  projectId: "delight-program",
-  storageBucket: "delight-program.firebasestorage.app",
-  messagingSenderId: "972498440796",
-  appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
-};
+  // Firebase config (Firestore)
+  const firebaseConfig = {
+    apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
+    authDomain: "delight-program.firebaseapp.com",
+    projectId: "delight-program",
+    storageBucket: "delight-program.appspot.com",
+    messagingSenderId: "972498440796",
+    appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
+  };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-const password = "mubsbatir"; // admin password
-let allProducts = [];
+  const password = "mubsbatir"; // admin password
+  let allProducts = [];
 
-// Admin login
-function checkPassword() {
-  const input = document.getElementById("adminPassword").value;
-  if(input === password){
-    document.getElementById("loginPanel").style.display="none";
-    document.getElementById("adminPanel").style.display="flex";
-    loadProducts();
-  } else { alert("Wrong password!"); }
-}
-window.checkPassword = checkPassword;
-
-// Preview product image
-function previewImage() {
-  const url = document.getElementById("productImageUrl").value;
-  const preview = document.getElementById("imagePreview");
-  if(url){ preview.src = url; preview.style.display = "block"; }
-  else { preview.src = ""; preview.style.display = "none"; }
-}
-window.previewImage = previewImage;
-
-// Upload product
-async function uploadProduct() {
-  const imageUrl = document.getElementById("productImageUrl").value;
-  const name = document.getElementById("productName").value;
-  const price = document.getElementById("productPrice").value;
-  const desc = document.getElementById("productDesc").value;
-  const category = document.getElementById("productCategory").value;
-
-  if(!imageUrl || !name || !price || !desc){ alert("Fill all fields"); return; }
-
-  await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
-  alert("Product added!");
-  clearForm();
-  loadProducts();
-}
-window.uploadProduct = uploadProduct;
-
-// Clear form
-function clearForm(){
-  document.getElementById("productImageUrl").value="";
-  document.getElementById("productName").value="";
-  document.getElementById("productPrice").value="";
-  document.getElementById("productDesc").value="";
-  document.getElementById("imagePreview").src="";
-  document.getElementById("imagePreview").style.display="none";
-}
-
-// Load products
-async function loadProducts(){
-  allProducts = [];
-  const snapshot = await getDocs(collection(db,"products"));
-  snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-    data.id = docSnap.id;
-    allProducts.push(data);
-  });
-  displayProducts('All');
-}
-
-// Display products
-function displayProducts(category){
-  const grid = document.getElementById("productGrid");
-  grid.innerHTML="";
-  allProducts.forEach(p=>{
-    if(category!=='All' && p.category!==category) return;
-    let starsHtml="";
-    let totalReviews=0;
-    if(p.reviews && p.reviews.length>0){
-      totalReviews = p.reviews.length;
-      const avg = Math.round(p.reviews.reduce((a,b)=>a+b.rating,0)/totalReviews);
-      for(let i=0;i<avg;i++){ starsHtml+="⭐"; }
-    }
-
-    const card = document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-      <img src="${p.imageUrl}" alt="${p.name}">
-      <div class="card-content">
-        <h3>${p.name}</h3>
-        <p>${p.desc}</p>
-        <p class="price">₦${p.price}</p>
-        <div class="review-section">
-          <span class="stars">${starsHtml}</span> (${totalReviews} reviews)
-        </div>
-      </div>
-      <div class="contact-btns">
-        <a class="call" href="tel:+2347060809088">📞 Call</a>
-        <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
-      </div>
-      <div class="admin-btns">
-        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-}
-window.displayProducts = displayProducts;
-
-// Delete product
-async function deleteProduct(id){
-  if(confirm("Delete this product?")){
-    await deleteDoc(doc(db,"products",id));
-    loadProducts();
+  // Admin login
+  function checkPassword() {
+    const input = document.getElementById("adminPassword").value;
+    if(input === password){
+      document.getElementById("loginPanel").style.display="none";
+      document.getElementById("adminPanel").style.display="flex";
+      loadProducts();
+    } else { alert("Wrong password!"); }
   }
-}
-window.deleteProduct = deleteProduct;
+  window.checkPassword = checkPassword;
 
-// Filter category
-function filterCategory(cat){ displayProducts(cat); }
-window.filterCategory = filterCategory;
+  // Preview product image
+  function previewImage() {
+    const url = document.getElementById("productImageUrl").value;
+    const preview = document.getElementById("imagePreview");
+    if(url){ preview.src = url; preview.style.display = "block"; }
+    else { preview.src = ""; preview.style.display = "none"; }
+  }
+  window.previewImage = previewImage;
 
-// Initial load
-loadProducts();
+  // Upload product
+  async function uploadProduct() {
+    const imageUrl = document.getElementById("productImageUrl").value;
+    const name = document.getElementById("productName").value;
+    const price = document.getElementById("productPrice").value;
+    const desc = document.getElementById("productDesc").value;
+    const category = document.getElementById("productCategory").value;
+
+    if(!imageUrl || !name || !price || !desc){ alert("Fill all fields"); return; }
+
+    try {
+      await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
+      alert("Product added!");
+      clearForm();
+      loadProducts();
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Error adding product: " + error.message);
+    }
+  }
+  window.uploadProduct = uploadProduct;
+
+  // Clear form
+  function clearForm(){
+    document.getElementById("productImageUrl").value="";
+    document.getElementById("productName").value="";
+    document.getElementById("productPrice").value="";
+    document.getElementById("productDesc").value="";
+    document.getElementById("imagePreview").src="";
+    document.getElementById("imagePreview").style.display="none";
+  }
+
+  // Load products
+  async function loadProducts(){
+    allProducts = [];
+    const snapshot = await getDocs(collection(db,"products"));
+    snapshot.forEach(docSnap=>{
+      const data = docSnap.data();
+      data.id = docSnap.id;
+      allProducts.push(data);
+    });
+    displayProducts('All');
+  }
+
+  // Display products
+  function displayProducts(category){
+    const grid = document.getElementById("productGrid");
+    grid.innerHTML="";
+    allProducts.forEach(p=>{
+      if(category!=='All' && p.category!==category) return;
+      let starsHtml="";
+      let totalReviews=0;
+      if(p.reviews && p.reviews.length>0){
+        totalReviews = p.reviews.length;
+        const avg = Math.round(p.reviews.reduce((a,b)=>a+b.rating,0)/totalReviews);
+        for(let i=0;i<avg;i++){ starsHtml+="⭐"; }
+      }
+
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML=`
+        <img src="${p.imageUrl}" alt="${p.name}">
+        <div class="card-content">
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <p class="price">₦${p.price}</p>
+          <div class="review-section">
+            <span class="stars">${starsHtml}</span> (${totalReviews} reviews)
+          </div>
+        </div>
+        <div class="contact-btns">
+          <a class="call" href="tel:+2347060809088">📞 Call</a>
+          <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
+        </div>
+        <div class="admin-btns">
+          <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+  window.displayProducts = displayProducts;
+
+  // Delete product
+  async function deleteProduct(id){
+    if(confirm("Delete this product?")){
+      try {
+        await deleteDoc(doc(db,"products",id));
+        loadProducts();
+      } catch (error) {
+        console.error("Delete failed:", error);
+        alert("Error deleting: " + error.message);
+      }
+    }
+  }
+  window.deleteProduct = deleteProduct;
+
+  // Filter category
+  function filterCategory(cat){ displayProducts(cat); }
+  window.filterCategory = filterCategory;
+
+  // Initial load
+  loadProducts();
 </script>
 
 </body>
