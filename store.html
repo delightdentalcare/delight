@@ -1,120 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delight Dental Care - Products</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    .product-form, .product-list {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    input, textarea, select, button {
-      width: 100%;
-      margin: 8px 0;
-      padding: 8px;
-    }
-    .product-item {
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delight Dental Care - Online Store</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<style>
+body { font-family: Arial,sans-serif; margin:0; background:#f9f9f9; color:#333; }
+a { text-decoration:none; }
+
+/* Header & Nav */
+header { background:#008080; color:white; padding:20px; text-align:center; font-size:1.6rem; font-weight:bold; }
+nav { background:#006666; padding:12px; text-align:center; }
+nav a { color:white; margin:0 15px; font-weight:bold; font-size:1rem; }
+nav a:hover { text-decoration:underline; }
+
+/* Container */
+.container { max-width:1200px; margin:0 auto; padding:20px; }
+
+/* Category Buttons */
+#categoryMenu { text-align:center; margin:20px 0; }
+#categoryMenu button { padding:10px 20px; margin:5px; border:none; border-radius:5px; background:#008080; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
+#categoryMenu button:hover { background:#006666; }
+
+/* Product Grid */
+.product-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+.card { background:white; border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.1); overflow:hidden; transition:transform 0.2s; }
+.card:hover { transform:scale(1.03); }
+.card img { width:100%; height:200px; object-fit:cover; }
+.card-content { padding:15px; text-align:center; }
+.card-content h3 { margin:10px 0; color:#008080; }
+.card-content p { font-size:0.9rem; margin:8px 0; }
+.price { font-size:1.1rem; font-weight:bold; color:#006666; margin:10px 0; }
+
+/* Contact Buttons */
+.contact-btns { text-align:center; padding:10px; }
+.contact-btns a { display:inline-block; padding:10px 15px; margin:5px; border-radius:6px; color:white; font-weight:bold; }
+.whatsapp { background:#25D366; }
+.call { background:#008080; }
+.whatsapp:hover { background:#1ebe5c; }
+.call:hover { background:#006666; }
+
+/* Reviews */
+.review-section { margin-top:5px; font-size:0.9rem; color:#555; }
+.review-section .stars { color:gold; font-size:1rem; }
+
+/* Admin Panel */
+#adminPanel { display:none; padding:30px; background:#f9f9f9; justify-content:center; margin-bottom:50px; }
+.admin-box { background:white; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:500px; width:100%; }
+.admin-box input, .admin-box textarea, .admin-box select { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
+.admin-box button { padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px; cursor:pointer; transition:0.3s; }
+.admin-box button:hover { background:#006666; }
+.admin-btns button { margin:5px; padding:6px 12px; border:none; border-radius:5px; cursor:pointer; background:#FF6347; color:white; }
+
+/* Image preview */
+#imagePreview { max-width:100%; max-height:200px; border-radius:8px; display:none; box-shadow:0 3px 8px rgba(0,0,0,0.1); margin:10px 0; }
+
+/* Admin Login */
+#loginPanel { text-align:center; margin:30px; }
+#loginPanel input { width:250px; padding:8px; border-radius:5px; border:1px solid #ccc; }
+#loginPanel button { padding:10px 20px; background:#008080; color:white; border:none; border-radius:6px; cursor:pointer; transition:0.3s; }
+#loginPanel button:hover { background:#006666; }
+
+/* Footer */
+footer { background:#008080; color:white; text-align:center; padding:15px; margin-top:30px; font-size:0.9rem; }
+
+@media(max-width:600px){ nav a { display:block; margin:8px 0; } }
+</style>
 </head>
 <body>
 
-  <h2>Add Product</h2>
-  <div class="product-form">
-    <input type="text" id="imageUrl" placeholder="Image URL">
-    <input type="text" id="name" placeholder="Product Name">
-    <input type="number" id="price" placeholder="Price">
-    <textarea id="description" placeholder="Description"></textarea>
-    <select id="category">
-      <option value="Dental Tools">Dental Tools</option>
-      <option value="Whitening">Whitening</option>
-      <option value="Others">Others</option>
-    </select>
-    <button id="addProduct">Add Product</button>
+<header>🦷 Delight Dental Care - Online Store</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="store.html">Products</a>
+  <a href="comments.html">Reviews</a>
+  <a href="contact.html">Contact</a>
+</nav>
+
+<div class="container">
+  <h2 style="text-align:center;color:#008080;">🛍️ Our Products</h2>
+
+  <div id="categoryMenu">
+    <button onclick="filterCategory('All')">All</button>
+    <button onclick="filterCategory('Toothpaste')">Toothpaste</button>
+    <button onclick="filterCategory('Mouthwash')">Mouthwash</button>
+    <button onclick="filterCategory('Whitening')">Whitening</button>
+    <button onclick="filterCategory('Dental Tools')">Dental Tools</button>
+    <button onclick="filterCategory('Others')">Others</button>
   </div>
 
-  <h2>Products</h2>
-  <div id="productList" class="product-list"></div>
+  <div id="productGrid" class="product-grid"></div>
+</div>
 
-  <!-- ✅ Firebase Script -->
-  <script type="module">
-    // Import Firebase SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+<!-- Admin login -->
+<div id="loginPanel">
+  <h2>🔒 Admin Login</h2>
+  <input type="password" id="adminPassword" placeholder="Enter password">
+  <button onclick="checkPassword()">Login</button>
+</div>
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
-      authDomain: "delight-program.firebaseapp.com",
-      projectId: "delight-program",
-      storageBucket: "delight-program.appspot.com",
-      messagingSenderId: "972498440796",
-      appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
-    };
+<!-- Admin panel -->
+<div id="adminPanel">
+  <div class="admin-box">
+    <h2>📦 Add Product</h2>
 
-    // Init Firebase + Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    <input type="text" id="productImageUrl" placeholder="Paste product image URL here" oninput="previewImage()"><br>
+    <img id="imagePreview" src="" alt="Product Preview">
 
-    const productList = document.getElementById("productList");
-    const addProductBtn = document.getElementById("addProduct");
+    <input type="text" id="productName" placeholder="Product name"><br>
+    <input type="text" id="productPrice" placeholder="Price"><br>
+    <textarea id="productDesc" placeholder="Description"></textarea><br>
+    <select id="productCategory">
+      <option value="Toothpaste">Toothpaste</option>
+      <option value="Mouthwash">Mouthwash</option>
+      <option value="Whitening">Whitening</option>
+      <option value="Dental Tools">Dental Tools</option>
+      <option value="Others">Others</option>
+    </select><br><br>
+    <button onclick="uploadProduct()">Add Product</button>
+  </div>
+</div>
 
-    // Add product
-    addProductBtn.addEventListener("click", async () => {
-      const imageUrl = document.getElementById("imageUrl").value;
-      const name = document.getElementById("name").value;
-      const price = document.getElementById("price").value;
-      const description = document.getElementById("description").value;
-      const category = document.getElementById("category").value;
+<footer>&copy; 2025 Delight Dental Care | All Rights Reserved</footer>
 
-      try {
-        await addDoc(collection(db, "products"), {
-          imageUrl,
-          name,
-          price: parseFloat(price),
-          description,
-          category
-        });
-        alert("✅ Product added successfully!");
-        loadProducts(); // reload
-      } catch (e) {
-        console.error("Error adding product: ", e);
-      }
-    });
+<!-- Firebase Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    // Load products
-    async function loadProducts() {
-      productList.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "products"));
-      querySnapshot.forEach((doc) => {
-        const product = doc.data();
-        const div = document.createElement("div");
-        div.classList.add("product-item");
-        div.innerHTML = `
-          <img src="${product.imageUrl}" alt="${product.name}" width="100"><br>
-          <strong>${product.name}</strong><br>
-          ₦${product.price}<br>
-          <em>${product.description}</em><br>
-          <small>${product.category}</small>
-        `;
-        productList.appendChild(div);
-      });
-    }
+  const firebaseConfig = {
+    apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
+    authDomain: "delight-program.firebaseapp.com",
+    projectId: "delight-program",
+    storageBucket: "delight-program.appspot.com",
+    messagingSenderId: "972498440796",
+    appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
+  };
 
-    // Initial load
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const password = "mubsbatir"; // admin password
+  let allProducts = [];
+
+  // Admin login
+  function checkPassword() {
+    const input = document.getElementById("adminPassword").value;
+    if(input === password){
+      document.getElementById("loginPanel").style.display="none";
+      document.getElementById("adminPanel").style.display="flex";
+      loadProducts();
+    } else { alert("Wrong password!"); }
+  }
+  window.checkPassword = checkPassword;
+
+  // Preview product image
+  function previewImage() {
+    const url = document.getElementById("productImageUrl").value;
+    const preview = document.getElementById("imagePreview");
+    if(url){ preview.src = url; preview.style.display = "block"; }
+    else { preview.src = ""; preview.style.display = "none"; }
+  }
+  window.previewImage = previewImage;
+
+  // Upload product
+  async function uploadProduct() {
+    const imageUrl = document.getElementById("productImageUrl").value;
+    const name = document.getElementById("productName").value;
+    const price = document.getElementById("productPrice").value;
+    const desc = document.getElementById("productDesc").value;
+    const category = document.getElementById("productCategory").value;
+
+    if(!imageUrl || !name || !price || !desc){ alert("Fill all fields"); return; }
+
+    await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
+    alert("Product added!");
+    clearForm();
     loadProducts();
-  </script>
+  }
+  window.uploadProduct = uploadProduct;
+
+  // Clear form
+  function clearForm(){
+    document.getElementById("productImageUrl").value="";
+    document.getElementById("productName").value="";
+    document.getElementById("productPrice").value="";
+    document.getElementById("productDesc").value="";
+    document.getElementById("imagePreview").src="";
+    document.getElementById("imagePreview").style.display="none";
+  }
+
+  // Load products
+  async function loadProducts(){
+    allProducts = [];
+    const snapshot = await getDocs(collection(db,"products"));
+    snapshot.forEach(docSnap=>{
+      const data = docSnap.data();
+      data.id = docSnap.id;
+      allProducts.push(data);
+    });
+    displayProducts('All');
+  }
+
+  // Display products
+  function displayProducts(category){
+    const grid = document.getElementById("productGrid");
+    grid.innerHTML="";
+    allProducts.forEach(p=>{
+      if(category!=='All' && p.category!==category) return;
+      let starsHtml="";
+      let totalReviews=0;
+      if(p.reviews && p.reviews.length>0){
+        totalReviews = p.reviews.length;
+        const avg = Math.round(p.reviews.reduce((a,b)=>a+b.rating,0)/totalReviews);
+        for(let i=0;i<avg;i++){ starsHtml+="⭐"; }
+      }
+
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML=`
+        <img src="${p.imageUrl}" alt="${p.name}">
+        <div class="card-content">
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <p class="price">₦${p.price}</p>
+          <div class="review-section">
+            <span class="stars">${starsHtml}</span> (${totalReviews} reviews)
+          </div>
+        </div>
+        <div class="contact-btns">
+          <a class="call" href="tel:+2347060809088">📞 Call</a>
+          <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
+        </div>
+        <div class="admin-btns">
+          <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+  window.displayProducts = displayProducts;
+
+  // Delete product
+  async function deleteProduct(id){
+    if(confirm("Delete this product?")){
+      await deleteDoc(doc(db,"products",id));
+      loadProducts();
+    }
+  }
+  window.deleteProduct = deleteProduct;
+
+  // Filter category
+  function filterCategory(cat){ displayProducts(cat); }
+  window.filterCategory = filterCategory;
+
+  // Initial load
+  loadProducts();
+</script>
+
 </body>
 </html>
