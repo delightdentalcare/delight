@@ -3,15 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Delight Dental Care Upload</title>
+<title>Delight Dental Care - Store</title>
+<style>
+body { font-family: Arial,sans-serif; margin:0; background:#f9f9f9; color:#333; }
+header { background:#008080; color:white; padding:20px; text-align:center; font-size:1.5rem; font-weight:bold; }
+nav { background:#006666; padding:10px; text-align:center; }
+nav a { color:white; text-decoration:none; margin:0 10px; font-weight:bold; }
+nav a:hover { text-decoration:underline; }
+.container { max-width:1200px; margin:0 auto; padding:20px; }
+#categoryMenu { text-align:center; margin:20px 0; }
+#categoryMenu button { padding:10px 20px; margin:5px; border:none; border-radius:5px; background:#008080; color:white; font-weight:bold; cursor:pointer; }
+#categoryMenu button:hover { background:#006666; }
+.product-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+.card { background:white; border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.1); overflow:hidden; transition:transform 0.2s; }
+.card:hover { transform:scale(1.03); }
+.card img { width:100%; height:200px; object-fit:cover; }
+.card-content { padding:15px; text-align:center; }
+.card-content h3 { margin:10px 0; color:#008080; }
+.card-content p { font-size:0.9rem; margin:10px 0; }
+.price { font-weight:bold; color:#006666; margin:10px 0; }
+button { cursor:pointer; border:none; border-radius:5px; padding:8px 12px; background:#008080; color:white; }
+button:hover { background:#006666; }
+#adminPanel { padding:20px; background:#f9f9f9; max-width:500px; margin:20px auto; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+</style>
 </head>
 <body>
 
-<h2>Upload Product</h2>
-<input type="file" id="productImage"><br><br>
-<input type="text" id="productName" placeholder="Product name"><br><br>
-<input type="text" id="productPrice" placeholder="Price"><br><br>
-<textarea id="productDesc" placeholder="Description"></textarea><br><br>
+<header>🦷 Delight Dental Care - Store</header>
+<nav>
+<a href="#">Home</a>
+<a href="#">Products</a>
+<a href="#">Reviews</a>
+<a href="#">Contact</a>
+</nav>
+
+<div class="container">
+<h2 style="text-align:center;color:#008080;">🛍️ Products</h2>
+
+<div id="categoryMenu">
+<button onclick="filterCategory('All')">All</button>
+<button onclick="filterCategory('Toothpaste')">Toothpaste</button>
+<button onclick="filterCategory('Mouthwash')">Mouthwash</button>
+<button onclick="filterCategory('Whitening')">Whitening</button>
+<button onclick="filterCategory('Dental Tools')">Dental Tools</button>
+<button onclick="filterCategory('Others')">Others</button>
+</div>
+
+<div id="productGrid" class="product-grid"></div>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel">
+<h2>📦 Add Product</h2>
+<input type="file" id="productImage" accept="image/*"><br>
+<input type="text" id="productName" placeholder="Product Name"><br>
+<input type="text" id="productPrice" placeholder="Price"><br>
+<textarea id="productDesc" placeholder="Description"></textarea>
 <select id="productCategory">
 <option value="Toothpaste">Toothpaste</option>
 <option value="Mouthwash">Mouthwash</option>
@@ -20,48 +67,113 @@
 <option value="Others">Others</option>
 </select><br><br>
 <button onclick="uploadProduct()">Upload Product</button>
+</div>
 
-<script>
-const CLOUD_NAME = "dderxvs7g";  // your Cloudinary cloud name
+<footer style="background:#008080; color:white; text-align:center; padding:15px; margin-top:30px;">&copy; 2025 Delight Dental Care</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = { 
+  apiKey:"AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU", 
+  authDomain:"delight-program.firebaseapp.com", 
+  projectId:"delight-program"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Cloudinary config
+const CLOUD_NAME = "dderxvs7g";  // replace with your cloud name
 const UPLOAD_PRESET = "Batir2";   // your unsigned preset
 
-async function uploadProduct() {
+let allProducts = [];
+
+// Upload product
+async function uploadProduct(){
   const file = document.getElementById("productImage").files[0];
-  const name = document.getElementById("productName").value;
-  const price = document.getElementById("productPrice").value;
-  const desc = document.getElementById("productDesc").value;
+  const name = document.getElementById("productName").value.trim();
+  const price = document.getElementById("productPrice").value.trim();
+  const desc = document.getElementById("productDesc").value.trim();
   const category = document.getElementById("productCategory").value;
 
-  if (!file || !name || !price || !desc) {
+  if(!file || !name || !price || !desc){
     alert("Fill all fields and select an image!");
     return;
   }
 
-  try {
+  try{
+    // Upload to Cloudinary
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
-      method: "POST",
-      body: formData
-    });
-
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, { method:"POST", body:formData });
     const data = await res.json();
-    if (data.secure_url) {
-      alert("Upload successful!\nImage URL: " + data.secure_url);
-      console.log(data); // you can copy this URL to store in Firestore if needed
-    } else {
-      alert("Upload failed. Check console.");
-      console.error(data);
-    }
+    if(!data.secure_url) throw new Error("Cloudinary upload failed");
 
-  } catch (err) {
-    alert("Error uploading. Check console.");
+    // Save to Firestore
+    await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl: data.secure_url});
+    alert("✅ Product uploaded!");
+    document.getElementById("productImage").value="";
+    document.getElementById("productName").value="";
+    document.getElementById("productPrice").value="";
+    document.getElementById("productDesc").value="";
+    loadProducts();
+  } catch(err){
     console.error(err);
+    alert("Upload failed. Check console.");
   }
 }
-</script>
 
+// Load products
+async function loadProducts(){
+  allProducts=[];
+  const snapshot = await getDocs(collection(db,"products"));
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    data.id = docSnap.id;
+    allProducts.push(data);
+  });
+  displayProducts("All");
+}
+
+// Display products
+function displayProducts(category){
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML="";
+  allProducts.forEach(p=>{
+    if(category!=="All" && p.category!==category) return;
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <img src="${p.imageUrl}" alt="${p.name}">
+      <div class="card-content">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <p class="price">₦${p.price}</p>
+      </div>
+      <div style="text-align:center; margin-bottom:10px;">
+        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+// Delete product
+async function deleteProduct(id){
+  if(confirm("Delete this product?")){
+    await deleteDoc(doc(db,"products",id));
+    loadProducts();
+  }
+}
+
+// Filter by category
+function filterCategory(cat){ displayProducts(cat); }
+
+// Initial load
+loadProducts();
+</script>
 </body>
 </html>
