@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Delight Dental Care - Online Store</title>
-<link id="favicon" rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
 <style>
 body { font-family: Arial,sans-serif; margin:0; background:#f9f9f9; color:#333; }
 a { text-decoration:none; }
@@ -54,7 +54,7 @@ nav a:hover { text-decoration:underline; }
 .admin-btns button { margin:5px; padding:6px 12px; border:none; border-radius:5px; cursor:pointer; background:#FF6347; color:white; }
 
 /* Image preview */
-#imagePreview, #logoPreview { max-width:100%; max-height:200px; border-radius:8px; display:none; box-shadow:0 3px 8px rgba(0,0,0,0.1); margin:10px 0; }
+#imagePreview { max-width:100%; max-height:200px; border-radius:8px; display:none; box-shadow:0 3px 8px rgba(0,0,0,0.1); margin:10px 0; }
 
 /* Admin Login */
 #loginPanel { text-align:center; margin:30px; }
@@ -106,10 +106,6 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
   <div class="admin-box">
     <h2>📦 Add Product</h2>
 
-    <!-- Logo/Favicon Input -->
-    <input type="text" id="logoUrl" placeholder="Paste logo/favicon URL" oninput="previewLogo()"><br>
-    <img id="logoPreview" src="" alt="Logo Preview">
-
     <input type="text" id="productImageUrl" placeholder="Paste product image URL here" oninput="previewImage()"><br>
     <img id="imagePreview" src="" alt="Product Preview">
 
@@ -130,58 +126,51 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 <footer>&copy; 2025 Delight Dental Care | All Rights Reserved</footer>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
-  authDomain: "delight-program.firebaseapp.com",
-  projectId: "delight-program",
-  storageBucket: "delight-program.appspot.com",
-  messagingSenderId: "972498440796",
-  appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
+  apiKey: "AIzaSyAqCh_LlZZR8IPhhCyyL2Bovg0OCNU64N8",
+  authDomain: "mubell-a27b6.firebaseapp.com",
+  projectId: "mubell-a27b6",
+  storageBucket: "mubell-a27b6.firebasestorage.app",
+  messagingSenderId: "867468981983",
+  appId: "1:867468981983:web:468a8d3e80ac0596729b6a",
+  measurementId: "G-6QJNSW3FL9"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-const password = "mubsbatir";
+const password = "mubsbatir"; // admin password
 let allProducts = [];
 
 // Admin login
-window.checkPassword = function(){
+function checkPassword() {
   const input = document.getElementById("adminPassword").value;
   if(input === password){
     document.getElementById("loginPanel").style.display="none";
     document.getElementById("adminPanel").style.display="flex";
     loadProducts();
   } else { alert("Wrong password!"); }
-};
+}
+window.checkPassword = checkPassword;
 
 // Preview product image
-window.previewImage = function() {
+function previewImage() {
   const url = document.getElementById("productImageUrl").value;
   const preview = document.getElementById("imagePreview");
   if(url){ preview.src = url; preview.style.display = "block"; }
   else { preview.src = ""; preview.style.display = "none"; }
 }
+window.previewImage = previewImage;
 
-// Preview logo/fav icon
-window.previewLogo = function(){
-  const url = document.getElementById("logoUrl").value;
-  const preview = document.getElementById("logoPreview");
-  if(url){
-    preview.src = url; preview.style.display = "block";
-    // Also update the favicon immediately
-    document.getElementById("favicon").href = url;
-  } else {
-    preview.src = ""; preview.style.display = "none";
-  }
-}
-
-// Upload product using image URL
-window.uploadProduct = async function() {
+// Upload product
+async function uploadProduct() {
   const imageUrl = document.getElementById("productImageUrl").value;
   const name = document.getElementById("productName").value;
   const price = document.getElementById("productPrice").value;
@@ -193,4 +182,87 @@ window.uploadProduct = async function() {
   await addDoc(collection(db,"products"), {name, price, desc, category, imageUrl, reviews:[]});
   alert("Product added!");
   clearForm();
-  loadProducts
+  loadProducts();
+}
+window.uploadProduct = uploadProduct;
+
+// Clear form
+function clearForm(){
+  document.getElementById("productImageUrl").value="";
+  document.getElementById("productName").value="";
+  document.getElementById("productPrice").value="";
+  document.getElementById("productDesc").value="";
+  document.getElementById("imagePreview").src="";
+  document.getElementById("imagePreview").style.display="none";
+}
+
+// Load products
+async function loadProducts(){
+  allProducts = [];
+  const snapshot = await getDocs(collection(db,"products"));
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
+    data.id = docSnap.id;
+    allProducts.push(data);
+  });
+  displayProducts('All');
+}
+
+// Display products
+function displayProducts(category){
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML="";
+  allProducts.forEach(p=>{
+    if(category!=='All' && p.category!==category) return;
+    let starsHtml="";
+    let totalReviews=0;
+    if(p.reviews && p.reviews.length>0){
+      totalReviews = p.reviews.length;
+      const avg = Math.round(p.reviews.reduce((a,b)=>a+b.rating,0)/totalReviews);
+      for(let i=0;i<avg;i++){ starsHtml+="⭐"; }
+    }
+
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <img src="${p.imageUrl}" alt="${p.name}">
+      <div class="card-content">
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <p class="price">₦${p.price}</p>
+        <div class="review-section">
+          <span class="stars">${starsHtml}</span> (${totalReviews} reviews)
+        </div>
+      </div>
+      <div class="contact-btns">
+        <a class="call" href="tel:+2347060809088">📞 Call</a>
+        <a class="whatsapp" href="https://wa.me/2347060809088?text=I%20want%20${encodeURIComponent(p.name)}">💬 WhatsApp</a>
+      </div>
+      <div class="admin-btns">
+        <button onclick="deleteProduct('${p.id}')">❌ Delete</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+window.displayProducts = displayProducts;
+
+// Delete product
+async function deleteProduct(id){
+  if(confirm("Delete this product?")){
+    await deleteDoc(doc(db,"products",id));
+    loadProducts();
+  }
+}
+window.deleteProduct = deleteProduct;
+
+// Filter category
+function filterCategory(cat){ displayProducts(cat); }
+window.filterCategory = filterCategory;
+
+// Initial load
+loadProducts();
+</script>
+
+</body>
+</html>
