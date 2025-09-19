@@ -125,25 +125,24 @@ footer { background:#008080; color:white; text-align:center; padding:15px; margi
 
 <footer>&copy; 2025 Delight Dental Care | All Rights Reserved</footer>
 
+<!-- 🔥 Firebase + Store Script -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
-// Firebase config
+// Firebase config (NEW project)
 const firebaseConfig = {
-  apiKey: "AIzaSyAqCh_LlZZR8IPhhCyyL2Bovg0OCNU64N8",
-  authDomain: "mubell-a27b6.firebaseapp.com",
-  projectId: "mubell-a27b6",
-  storageBucket: "mubell-a27b6.firebasestorage.app",
-  messagingSenderId: "867468981983",
-  appId: "1:867468981983:web:468a8d3e80ac0596729b6a",
-  measurementId: "G-6QJNSW3FL9"
+  apiKey: "AIzaSyD1uU1UZdioHQWF7etIZ0tmz2MkwGhmThU",
+  authDomain: "delight-program.firebaseapp.com",
+  databaseURL: "https://delight-program-default-rtdb.firebaseio.com",
+  projectId: "delight-program",
+  storageBucket: "delight-program.firebasestorage.app",
+  messagingSenderId: "972498440796",
+  appId: "1:972498440796:web:e1220bf5dd8e82b7a0cc99"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 const password = "mubsbatir"; // admin password
