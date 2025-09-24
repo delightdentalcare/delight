@@ -7,8 +7,16 @@
   <meta name="description" content="Delight Dental Services - Professional dental care in Jimeta, Yola. We offer scaling, polishing, fillings, whitening, dentures, and more." />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
+  <script>
+    // Toggle services visibility
+    function toggleService(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("hidden");
+    }
+  </script>
+
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="logo. png.jpg" />
+  <link rel="icon" type="image/png" href="logo.png.jpg" />
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -17,15 +25,17 @@
     <div class="container mx-auto flex justify-between items-center">
       <!-- Logo + Title -->
       <div class="flex items-center space-x-3">
-        <img src="logo. png.jpg" alt="Delight Dental Logo" class="h-10 w-10 rounded-full bg-white p-1">
+        <img src="logo.png.jpg" alt="Delight Dental Logo" class="h-10 w-10 rounded-full bg-white p-1">
         <h1 class="text-2xl font-bold">Delight Dental Services</h1>
       </div>
       <!-- Navigation -->
-      <nav>
+      <nav class="font-bold">
         <a href="#services" class="px-2 hover:underline">Services</a>
         <a href="#gallery" class="px-2 hover:underline">Before & After</a>
         <a href="#appointment" class="px-2 hover:underline">Appointment</a>
         <a href="#contact" class="px-2 hover:underline">Contact</a>
+        <a href="store.html" class="px-2 hover:underline">Store</a>
+        <a href="feeds.html" class="px-2 hover:underline">Feeds</a>
       </nav>
     </div>
   </header>
@@ -37,69 +47,121 @@
     <p class="mt-2">Providing professional dental care for you and your family in Jimeta, Yola.</p>
     <a href="#appointment" class="mt-4 inline-block bg-blue-700 text-white px-6 py-2 rounded shadow hover:bg-blue-800">Book Appointment</a>
   </section>
- <!-- Our Quality Oralcare Product Button -->
-<div class="mt-6 flex justify-center">
-  <a href="store.html"
-     class="inline-block w-full sm:w-auto text-center bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 font-semibold transition">
-    CHECK OUR STORE
-  </a>
-</div>
 
-      <!-- Services -->
+  <!-- Our Quality Oralcare Product Button -->
+  <div class="mt-6 flex justify-center">
+    <a href="store.html"
+       class="inline-block w-full sm:w-auto text-center bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 font-semibold transition">
+      CHECK OUR STORE
+    </a>
+  </div>
+
+  <!-- Services -->
   <section id="services" class="py-12 bg-gray-100">
     <div class="container mx-auto text-center">
       <h3 class="text-2xl font-bold text-blue-700 mb-6">Our Services</h3>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+
+        <!-- Scaling & Polishing -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="scaling and polishing1.png" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Scaling & Polishing</h4>
-          <p>Professional cleaning to keep your teeth healthy and bright.</p>
+          <button onclick="toggleService('service1')" class="w-full text-left font-semibold text-lg text-blue-700">Scaling & Polishing</button>
+          <div id="service1" class="hidden mt-3">
+            <img src="scaling and polishing1.png" alt="Scaling & Polishing" class="w-full rounded">
+            <p class="mt-2">Professional cleaning to keep your teeth healthy and bright.</p>
+            <a href="scaling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Temporary Filling -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="temporary fllng.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Temporary Filling</h4>
-          <p>Quick and effective protection until a permanent filling is placed.</p>
+          <button onclick="toggleService('service2')" class="w-full text-left font-semibold text-lg text-blue-700">Temporary Filling</button>
+          <div id="service2" class="hidden mt-3">
+            <img src="temporary fllng.jpg" alt="Temporary Filling" class="w-full rounded">
+            <p class="mt-2">Quick and effective protection until a permanent filling is placed.</p>
+            <a href="temporary-filling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Composite Filling -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="compo.jpg.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Composite Filling</h4>
-          <p>Tooth-colored fillings that blend naturally with your teeth.</p>
+          <button onclick="toggleService('service3')" class="w-full text-left font-semibold text-lg text-blue-700">Composite Filling</button>
+          <div id="service3" class="hidden mt-3">
+            <img src="compo.jpg.jpg" alt="Composite Filling" class="w-full rounded">
+            <p class="mt-2">Tooth-colored fillings that blend naturally with your teeth.</p>
+            <a href="composite-filling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- GIC Filling -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="gic.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">GIC Filling</h4>
-          <p>Durable glass ionomer cement filling for long-lasting results.</p>
+          <button onclick="toggleService('service4')" class="w-full text-left font-semibold text-lg text-blue-700">GIC Filling</button>
+          <div id="service4" class="hidden mt-3">
+            <img src="gic.jpg" alt="GIC Filling" class="w-full rounded">
+            <p class="mt-2">Durable glass ionomer cement filling for long-lasting results.</p>
+            <a href="gic-filling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Fluoride Application -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="Flouride appl.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Fluoride Application</h4>
-          <p>Protective treatment to strengthen enamel and prevent cavities.</p>
+          <button onclick="toggleService('service5')" class="w-full text-left font-semibold text-lg text-blue-700">Fluoride Application</button>
+          <div id="service5" class="hidden mt-3">
+            <img src="Flouride appl.jpg" alt="Fluoride Application" class="w-full rounded">
+            <p class="mt-2">Protective treatment to strengthen enamel and prevent cavities.</p>
+            <a href="fluoride-application.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Deciduous Extraction -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="deciduous.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Deciduous Extraction</h4>
-          <p>Safe removal of baby teeth when necessary.</p>
+          <button onclick="toggleService('service6')" class="w-full text-left font-semibold text-lg text-blue-700">Deciduous Extraction</button>
+          <div id="service6" class="hidden mt-3">
+            <img src="deciduous.jpg" alt="Deciduous Extraction" class="w-full rounded">
+            <p class="mt-2">Safe removal of baby teeth when necessary.</p>
+            <a href="deciduous-extraction.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Teeth Whitening -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="teeth whitening1.png" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Teeth Whitening</h4>
-          <p>Brighten your smile with our professional whitening treatment.</p>
+          <button onclick="toggleService('service7')" class="w-full text-left font-semibold text-lg text-blue-700">Teeth Whitening</button>
+          <div id="service7" class="hidden mt-3">
+            <img src="teeth whitening1.png" alt="Teeth Whitening" class="w-full rounded">
+            <p class="mt-2">Brighten your smile with our professional whitening treatment.</p>
+            <a href="teeth-whitening.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Extraction -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="extraction.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Extraction</h4>
-          <p>Gentle and safe tooth removal procedures.</p>
+          <button onclick="toggleService('service8')" class="w-full text-left font-semibold text-lg text-blue-700">Extraction</button>
+          <div id="service8" class="hidden mt-3">
+            <img src="extraction.jpg" alt="Extraction" class="w-full rounded">
+            <p class="mt-2">Gentle and safe tooth removal procedures.</p>
+            <a href="extraction.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- Dentures -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="denture.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">Dentures (Artificial Teeth)</h4>
-          <p>Comfortable and natural-looking replacement for missing teeth.</p>
+          <button onclick="toggleService('service9')" class="w-full text-left font-semibold text-lg text-blue-700">Dentures (Artificial Teeth)</button>
+          <div id="service9" class="hidden mt-3">
+            <img src="denture.jpg" alt="Dentures" class="w-full rounded">
+            <p class="mt-2">Comfortable and natural-looking replacement for missing teeth.</p>
+            <a href="dentures.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
+        <!-- General Dental Check-up -->
         <div class="bg-white p-4 shadow rounded">
-          <img src="genaral check.jpg" alt="Description" style="max-width: 100%; height: auto;">
-          <h4 class="font-semibold text-lg">General Dental Check-up</h4>
-          <p>Routine exams to maintain oral health and prevent problems.</p>
+          <button onclick="toggleService('service10')" class="w-full text-left font-semibold text-lg text-blue-700">General Dental Check-up</button>
+          <div id="service10" class="hidden mt-3">
+            <img src="genaral check.jpg" alt="General Dental Check-up" class="w-full rounded">
+            <p class="mt-2">Routine exams to maintain oral health and prevent problems.</p>
+            <a href="general-checkup.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -108,7 +170,7 @@
   <section id="gallery" class="py-12">
     <div class="container mx-auto text-center">
       <h3 class="text-2xl font-bold text-blue-700 mb-6">Before & After</h3>
-      <div class="grid md:grid-co2 gap-6">
+      <div class="grid md:grid-cols-2 gap-6">
         <img src="before and after.png" alt="Before and After 1" class="rounded shadow">
         <img src="bfr and aftr.jpg" alt="Before and After 2" class="rounded shadow">
       </div>
@@ -145,13 +207,15 @@
       </form>
     </div>
   </section>
- <!-- Our Quality Oralcare Product Button -->
-<div class="mt-6 flex justify-center">
-  <a href="Delight .html"
-     class="inline-block w-full sm:w-auto text-center bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 font-semibold transition">
-    COMMENTS
-  </a>
-</div>
+
+  <!-- Comments Button -->
+  <div class="mt-6 flex justify-center">
+    <a href="Delight.html"
+       class="inline-block w-full sm:w-auto text-center bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 font-semibold transition">
+      COMMENTS
+    </a>
+  </div>
+
   <!-- Contact Section -->
   <section id="contact" class="py-12">
     <div class="container mx-auto text-center">
@@ -160,7 +224,7 @@
       <p><strong>Phone/WhatsApp:</strong> <a href="https://wa.me/2347060809088" class="text-blue-700 underline">07060809088</a></p>
       <p><strong>Email:</strong> <a href="mailto:delightdentalservices@gmail.com" class="text-blue-700 underline">delightdentalservices@gmail.com</a></p>
       <div class="mt-4">
-        <a href="https://www.facebook.com/share/1B7yK5tZLw/"_blank" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Facebook</a>
+        <a href="https://www.facebook.com/share/1B7yK5tZLw/" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Facebook</a>
         <a href="https://wa.me/2347060809088" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Chat on WhatsApp</a>
       </div>
     </div>
@@ -172,4 +236,4 @@
   </footer>
 
 </body>
-    </html>
+              </html>
