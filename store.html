@@ -137,6 +137,24 @@
       display: none;
     }
 
+    .filters {
+      margin: 30px auto;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .filters select, 
+    .filters input {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 220px;
+      max-width: 100%;
+    }
+
     footer {
       margin-top: 40px;
       text-align: center;
@@ -150,23 +168,44 @@
 
   <nav>
     <div class="brand">
-      <img src="logo. png.jpg" alt="Delight Dental Logo">
+      <img src="logo.png.jpg" alt="Delight Dental Logo">
       <h1>Delight Dental Care</h1>
     </div>
     <ul>
       <li><a href="index.html">Home</a></li>
-      <li><a href="#">feeds</a></li>
-      <li><a href="Delight .html">comments</a></li>
+      <li><a href="#">Feeds</a></li>
+      <li><a href="Delight.html">Comments</a></li>
       <li><a href="#">About Us</a></li>
     </ul>
   </nav>
+
   <h4 style="font-size: 18px; font-weight: 600; color: #222; text-align: center; line-height: 1.5; margin: 20px auto; max-width: 600px; padding: 10px;">
-  📞 Place your order easily via <strong>Call or WhatsApp</strong>.<br> 
-  🚚 We deliver nationwide, straight to your <strong>doorstep</strong>.
+    📞 Place your order easily via <strong>Call or WhatsApp</strong>.<br> 
+    🚚 We deliver nationwide, straight to your <strong>doorstep</strong>.
   </h4>
-<marquee behavior="scroll" direction="left" scrollamount="7" style="background: #ffcc00; color: #000; font-weight: bold; font-size: 22px; padding: 12px; border-radius: 8px; text-shadow: 0 0 5px #fff, 0 0 10px #ff0000, 0 0 15px #ff0000;">
-  🎉 FREE DELIVERY IN YOLA & JIMETA 🚚
-</marquee>
+
+  <marquee behavior="scroll" direction="left" scrollamount="7" style="background: #ffcc00; color: #000; font-weight: bold; font-size: 22px; padding: 12px; border-radius: 8px; text-shadow: 0 0 5px #fff, 0 0 10px #ff0000, 0 0 15px #ff0000;">
+    🎉 FREE DELIVERY IN YOLA & JIMETA 🚚
+  </marquee>
+
+  <!-- Filters -->
+  <div class="filters">
+    <select id="categoryFilter">
+      <option value="all">All Products</option>
+      <option value="Dental Tools">Dental Tools</option>
+      <option value="Dental Materials">Dental Materials</option>
+      <option value="Dental Equipment">Dental Equipment</option>
+      <option value="Whitening">Whitening</option>
+      <option value="Braces">Braces</option>
+      <option value="Oral Care">Oral Care</option>
+      <option value="Toothpaste">Toothpaste</option>
+      <option value="Mouthwash">Mouthwash</option>
+      <option value="Implants">Implants</option>
+      <option value="Others">Others</option>
+    </select>
+    <input type="text" id="searchBar" placeholder="🔍 Search products...">
+  </div>
+
   <div class="container">
 
     <div id="adminForm" class="product-form" style="display:none;">
@@ -177,6 +216,8 @@
       <textarea id="description" placeholder="Description"></textarea>
       <select id="category">
         <option value="Dental Tools">Dental Tools</option>
+        <option value="Dental Materials">Dental Materials</option>
+        <option value="Dental Equipment">Dental Equipment</option>
         <option value="Whitening">Whitening</option>
         <option value="Braces">Braces</option>
         <option value="Oral Care">Oral Care</option>
@@ -216,6 +257,8 @@
     const adminForm = document.getElementById("adminForm");
     const productList = document.getElementById("productList");
     const addProductBtn = document.getElementById("addProduct");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const searchBar = document.getElementById("searchBar");
 
     const ADMIN_KEY = "mubsbatir";
     let isAdmin = false;
@@ -263,6 +306,8 @@
         const product = docSnap.data();
         const div = document.createElement("div");
         div.classList.add("product-card");
+        div.setAttribute("data-category", product.category);
+        div.setAttribute("data-name", product.name.toLowerCase());
         div.innerHTML = `
           <img src="${product.imageUrl}" alt="${product.name}">
           <h3>${product.name}</h3>
@@ -271,8 +316,8 @@
           <small>Category: ${product.category}</small>
           <div class="actions">
             <button class="like-btn">👍 Like (${product.likes || 0})</button>
-            <button onclick="window.location.href='tel:+2348012345678'">📞 Call</button>
-            <button onclick="window.location.href='https://wa.me/2348012345678?text=I am interested in ${product.name}'">💬 WhatsApp</button>
+            <button onclick="window.location.href='tel:+2347060809088'">📞 Call</button>
+            <button onclick="window.location.href='https://wa.me/2347060809088?text=I am interested in ${product.name}'">💬 WhatsApp</button>
             <button class="share-btn">🔗 Share</button>
             <button class="edit-btn">✏️ Edit</button>
             <button class="delete-btn">❌ Delete</button>
@@ -335,7 +380,31 @@
 
         productList.appendChild(div);
       });
+
+      applyFilters();
     });
+
+    // Filter + Search function
+    function applyFilters() {
+      const selected = categoryFilter.value;
+      const searchText = searchBar.value.toLowerCase();
+      const cards = document.querySelectorAll(".product-card");
+
+      cards.forEach(card => {
+        const matchesCategory = (selected === "all" || card.getAttribute("data-category") === selected);
+        const matchesSearch = card.getAttribute("data-name").includes(searchText);
+
+        if (matchesCategory && matchesSearch) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    // Events
+    categoryFilter.addEventListener("change", applyFilters);
+    searchBar.addEventListener("input", applyFilters);
   </script>
 </body>
-</html>
+        </html>
