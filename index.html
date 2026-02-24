@@ -1,336 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Delight Dental Services</title>
-  <meta name="description" content="Delight Dental Services - Professional dental care in Jimeta, Yola. We offer scaling, polishing, fillings, whitening, dentures, and more." />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delight Dental Care</title>
 
-  <script>
-    // Toggle services visibility
-    function toggleService(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle("hidden");
-    }
-  </script>
+<meta name="description" content="Delight Dental Care Jimeta Yola. Professional dental clinic offering cleaning, whitening, braces, dentures, and more.">
+<meta name="keywords" content="Dentist Jimeta, Dental clinic Yola, Teeth whitening Nigeria, Dentist Adamawa">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="logo.png.jpg" />
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-  <!-- ✅ Marquee CSS (professional, continuous) -->
-  <style>
-    :root {
-      --marquee-duration: 20s; /* change this to speed up/slow down */
-    }
-
-    .marquee-wrap {
-      overflow: hidden;
-      position: relative;
-      width: 100%;
-      background: #ffffff;
-      padding: 14px 0;
-      margin: 20px 0;
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
-    }
-
-    .marquee-track {
-      display: flex;
-      gap: 1.75rem;
-      align-items: center;
-      animation: marquee var(--marquee-duration) linear infinite;
-      width: max-content;
-      padding-left: 2rem; /* small left padding so the first item doesn't stick to edge */
-    }
-
-    /* Pause on hover for accessibility; still continuous looping */
-    .marquee-track:hover {
-      animation-play-state: paused;
-    }
-
-    .marquee-item img {
-      height: 120px;
-      width: auto;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      background: #fff;
-      display: block;
-      padding: 6px;
-    }
-
-    .marquee-item img:hover {
-      transform: translateY(-4px) scale(1.03);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
-    }
-
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-
-    /* Small screens */
-    @media (max-width: 640px) {
-      .marquee-item img {
-        height: 76px;
-      }
-      .marquee-wrap { padding: 10px 0; }
-    }
-  </style>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f7fb}
+header{background:#0b5ed7;color:white;text-align:center;padding:20px}
+.hidden{display:none}
+.card{background:white;padding:18px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.08);margin:20px auto;max-width:1100px}
+h2{color:#0b5ed7}
+button{background:#0b5ed7;color:white;padding:10px 16px;border-radius:6px}
+button:hover{background:#094db1}
+.marquee-wrap{overflow:hidden;background:#fff;padding:12px 0;margin:20px auto;max-width:1100px;border-radius:8px}
+.marquee-track{display:flex;gap:1.5rem;animation:marquee 5.5s linear infinite;width:max-content}
+.marquee-item img{height:90px;border-radius:10px}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.service-box{background:#eef4ff;border-radius:10px;padding:10px;position:relative;cursor:pointer;transition:.3s;text-align:center;}
+.service-box:hover{transform:translateY(-4px);box-shadow:0 6px 14px rgba(0,0,0,.1)}
+.service-box span{position:absolute;bottom:8px;left:0;right:0;background:rgba(0,0,0,.55);color:white;font-size:14px;padding:4px;border-radius:6px;}
+.service-desc{opacity:0;max-height:0;overflow:hidden;transition:.4s;font-size:14px;margin-top:0;}
+.service-desc.show{opacity:1;max-height:300px;margin-top:8px;}
+.read-btn{display:none;margin-top:8px;background:#10b981;padding:6px 12px;border-radius:6px;color:white;font-size:13px;text-decoration:none;width:max-content;margin-left:auto;margin-right:auto;}
+.read-btn.show{display:block;}
+</style>
 </head>
-<body class="bg-gray-50 text-gray-800">
 
-  <!-- Header -->
-  <header class="bg-blue-700 text-white p-4 shadow-lg">
-    <div class="container mx-auto flex justify-between items-center">
-      <!-- Logo + Title -->
-      <div class="flex items-center space-x-3">
-        <img src="logo. png.jpg" alt="Delight Dental Logo" class="h-10 w-10 rounded-full bg-white p-1">
-        <h1 class="text-2xl font-bold">Delight Dental Services</h1>
-      </div>
-      <!-- Navigation -->
-      <nav class="font-bold">
-        <a href="#services" class="px-2 hover:underline">Services</a>
-        <a href="#gallery" class="px-2 hover:underline">Before & After</a>
-        <a href="#appointment" class="px-2 hover:underline">Appointment</a>
-        <a href="#contact" class="px-2 hover:underline">Contact</a>
-        <a href="store.html" class="px-2 hover:underline">Store</a>
-        <a href="feeds.html" class="px-2 hover:underline">Feeds</a>
-      </nav>
-    </div>
-  </header>
+<body>
 
-  <!-- Hero Section -->
-  <section class="bg-white py-10 text-center">
-    <img src="background.png" alt="Description" style="max-width: 100%; height: auto;">
-    <h2 class="text-3xl font-bold text-blue-700">Healthy Smile, Happy Life</h2>
-    <p class="mt-2">Providing professional dental care for you and your family in Jimeta, Yola.</p>
-    <a href="#appointment" class="mt-4 inline-block bg-blue-700 text-white px-6 py-2 rounded shadow hover:bg-blue-800">Book Appointment</a>
-  </section>
+<header>
+<img src="logo.png" class="mx-auto h-16 w-16 rounded-full mb-2">
+<h1 class="text-3xl font-bold">Delight Dental Care</h1>
+<p>Your Smile Is Our Priority</p>
+</header>
 
-  <!-- ✅ Responsive Marquee with 4 images (continuous) -->
-  <div class="container mx-auto px-4">
-    <div class="marquee-wrap">
-      <div class="marquee-track" role="list" aria-label="Brands and Products">
-        <!-- Replace src with your real images later -->
-        <div class="marquee-item" role="listitem"><img src="0f1520c716f2ca9_file_00000000f2406246800d673e4597d2c7_wm.png" alt="Image 1"></div>
-        <div class="marquee-item" role="listitem"><img src="toothbrush.png"alt="Image 2"></div>
-        <div class="marquee-item" role="listitem"><img src="file_00000000e4b861fab7a7f0af954e6327.png" alt="Image 3"></div>
-        <div class="marquee-item" role="listitem"><img src="powder. png.png" alt="Image 4"></div>
+<nav class="bg-blue-800 text-white text-center p-4">
+<span onclick="toggleMenu('menu')" class="cursor-pointer font-bold">Menu ▼</span>
+</nav>
 
-        <!-- Duplicate for smooth continuous loop -->
-        <div class="marquee-item" role="listitem"><img src="0f1520c716f2ca9_file_00000000f2406246800d673e4597d2c7_wm.png" alt="Image 1"></div>
-        <div class="marquee-item" role="listitem"><img src="toothbrush.png" alt="Image 2"></div>
-        <div class="marquee-item" role="listitem"><img src="file_00000000e4b861fab7a7f0af954e6327.png"></div>
-        <div class="marquee-item" role="listitem"><img src="powder. png.png" alt="Image 4"></div>
-      </div>
-    </div>
-  </div>
+<div id="menu" class="hidden bg-blue-700 text-white text-center p-4">
+<a onclick="toggle('about')" class="block py-2">About us</a>
+<a href="#services" class="block py-2">Services</a>
+<a href="#gallery" class="block py-2">Before & After</a>
+<a href="#store" class="block py-2">Store</a>
+<a href="#appointment" class="block py-2">Appointment</a>
+</div>
 
-  <!-- Our Quality Oralcare Product Button -->
-  <div class="mt-6 flex justify-center">
-    <a href="store.html"
-       class="inline-block w-full sm:w-auto text-center bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 font-semibold transition">
-      CHECK OUR STORE
-    </a>
-  </div>
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+<div class="marquee-track">
+<div class="marquee-item"><img src="0f1520c716f2ca9_file_00000000f2406246800d673e4597d2c7_wm.png"></div>
+<div class="marquee-item"><img src="toothbrush.png"></div>
+<div class="marquee-item"><img src="file_00000000e4b861fab7a7f0af954e6327.png"></div>
+<div class="marquee-item"><img src="powder.png"></div>
+</div>
+</div>
 
-  <!-- Services -->
-  <section id="services" class="py-12 bg-gray-100">
-    <div class="container mx-auto text-center">
-      <h3 class="text-2xl font-bold text-blue-700 mb-6">Our Services</h3>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+<!-- Slider -->
+<div class="elfsight-app-5385b60c-c9cd-44ed-ab54-39d10b3b94ee"></div>
 
-        <!-- Scaling & Polishing -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service1')" class="w-full text-left font-semibold text-lg text-blue-700">Scaling & Polishing</button>
-          <div id="service1" class="hidden mt-3">
-            <img src="scaling and polishing1.png" alt="Scaling & Polishing" class="w-full rounded">
-            <p class="mt-2">Professional cleaning to keep your teeth healthy and bright.</p>
-            <a href="scaling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<!-- ABOUT US -->
+<section id="about" class="card hidden">
+<h2 class="text-2xl font-bold">About Us</h2>
+<p class="mb-4">Delight Dental Care provides modern, affordable and painless dental treatment in Jimeta Yola.</p>
 
-        <!-- Temporary Filling -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service2')" class="w-full text-left font-semibold text-lg text-blue-700">Temporary Filling</button>
-          <div id="service2" class="hidden mt-3">
-            <img src="temporary fllng.jpg" alt="Temporary Filling" class="w-full rounded">
-            <p class="mt-2">Quick and effective protection until a permanent filling is placed.</p>
-            <a href="temporary-filling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<!-- Store Locator inside About -->
+<div class="elfsight-app-8df52f6b-8e49-470a-a957-aa98f0b213f7"></div>
+</section>
 
-        <!-- Composite Filling -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service3')" class="w-full text-left font-semibold text-lg text-blue-700">Composite Filling</button>
-          <div id="service3" class="hidden mt-3">
-            <img src="compo.jpg.jpg" alt="Composite Filling" class="w-full rounded">
-            <p class="mt-2">Tooth-colored fillings that blend naturally with your teeth.</p>
-            <a href="composite-filling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<!-- SERVICES -->
+<section id="services" class="card">
+<h2 class="text-2xl font-bold mb-4">Our Services</h2>
+<div class="grid md:grid-cols-3 gap-5 text-center">
 
-        <!-- GIC Filling -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service4')" class="w-full text-left font-semibold text-lg text-blue-700">GIC Filling</button>
-          <div id="service4" class="hidden mt-3">
-            <img src="gic.jpg" alt="GIC Filling" class="w-full rounded">
-            <p class="mt-2">Durable glass ionomer cement filling for long-lasting results.</p>
-            <a href="gic-filling.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="scaling and polishing1.png"><span>Cleaning & Polishing</span>
+<p class="service-desc">Removes plaque, tartar and stains.<a href="cleaning.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- Fluoride Application -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service5')" class="w-full text-left font-semibold text-lg text-blue-700">Fluoride Application</button>
-          <div id="service5" class="hidden mt-3">
-            <img src="Flouride appl.jpg" alt="Fluoride Application" class="w-full rounded">
-            <p class="mt-2">Protective treatment to strengthen enamel and prevent cavities.</p>
-            <a href="fluoride-application.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="teeth whitening1.png"><span>Teeth Whitening</span>
+<p class="service-desc">Professional whitening.<a href="whitening.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- Deciduous Extraction -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service6')" class="w-full text-left font-semibold text-lg text-blue-700">Deciduous Extraction</button>
-          <div id="service6" class="hidden mt-3">
-            <img src="deciduous.jpg" alt="Deciduous Extraction" class="w-full rounded">
-            <p class="mt-2">Safe removal of baby teeth when necessary.</p>
-            <a href="deciduous-extraction.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="compo.jpg.jpg"><span>Dental Fillings</span>
+<p class="service-desc">Repairs cavities.<a href="fillings.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- Teeth Whitening -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service7')" class="w-full text-left font-semibold text-lg text-blue-700">Teeth Whitening</button>
-          <div id="service7" class="hidden mt-3">
-            <img src="teeth whitening1.png" alt="Teeth Whitening" class="w-full rounded">
-            <p class="mt-2">Brighten your smile with our professional whitening treatment.</p>
-            <a href="teeth-whitening.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="root canal.jpg"><span>Root Canal</span>
+<p class="service-desc">Saves infected teeth.<a href="root-canal.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- Extraction -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service8')" class="w-full text-left font-semibold text-lg text-blue-700">Extraction</button>
-          <div id="service8" class="hidden mt-3">
-            <img src="extraction.jpg" alt="Extraction" class="w-full rounded">
-            <p class="mt-2">Gentle and safe tooth removal procedures.</p>
-            <a href="extraction.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="extraction.jpg"><span>Extraction</span>
+<p class="service-desc">Safe removal.<a href="extraction.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- Dentures -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service9')" class="w-full text-left font-semibold text-lg text-blue-700">Dentures (Artificial Teeth)</button>
-          <div id="service9" class="hidden mt-3">
-            <img src="denture.jpg" alt="Dentures" class="w-full rounded">
-            <p class="mt-2">Comfortable and natural-looking replacement for missing teeth.</p>
-            <a href="dentures.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="gum.jpg"><span>Gum Treatment</span>
+<p class="service-desc">Treats gum infections.<a href="gum.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- General Dental Check-up -->
-        <div class="bg-white p-4 shadow rounded">
-          <button onclick="toggleService('service10')" class="w-full text-left font-semibold text-lg text-blue-700">General Dental Check-up</button>
-          <div id="service10" class="hidden mt-3">
-            <img src="genaral check.jpg" alt="General Dental Check-up" class="w-full rounded">
-            <p class="mt-2">Routine exams to maintain oral health and prevent problems.</p>
-            <a href="general-checkup.html" class="inline-block mt-3 text-blue-600 underline">Read More</a>
-          </div>
-        </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="braces.jpg"><span>Braces</span>
+<p class="service-desc">Straightens teeth.<a href="braces.html" class="read-btn">Read More</a></p>
+</div>
 
-      </div>
-    </div>
-  </section>
-  <div class="container mx-auto px-4">
-    <div class="marquee-wrap">
-      <div class="marquee-track" role="list" aria-label="Brands and Products">
-        <!-- Replace src with your real images later -->
-        <div class="marquee-item" role="listitem"><img src="1.jpg" alt="Image 1"></div>
-        <div class="marquee-item" role="listitem"><img src="toothbrush.png"alt="Image 2"></div>
-        <div class="marquee-item" role="listitem"><img src="file_00000000e4b861fab7a7f0af954e6327.png" alt="Image 3"></div>
-        <div class="marquee-item" role="listitem"><img src="powder. png.png" alt="Image 4"></div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="general check.jpg"><span>Checkups</span>
+<p class="service-desc">Routine exams.<a href="checkup.html" class="read-btn">Read More</a></p>
+</div>
 
-        <!-- Duplicate for smooth continuous loop -->
-        <div class="marquee-item" role="listitem"><img src="0f1520c716f2ca9_file_00000000f2406246800d673e4597d2c7_wm.png" alt="Image 1"></div>
-        <div class="marquee-item" role="listitem"><img src="toothbrush.png" alt="Image 2"></div>
-        <div class="marquee-item" role="listitem"><img src="file_00000000e4b861fab7a7f0af954e6327.png"></div>
-        <div class="marquee-item" role="listitem"><img src="powder. png.png" alt="Image 4"></div>
-      </div>
-    </div>
-  </div>
+<div onclick="toggleService(this)" class="service-box">
+<img src="denture.jpg"><span>Dentures</span>
+<p class="service-desc">Artificial teeth.<a href="dentures.html" class="read-btn">Read More</a></p>
+</div>
+        
+</div>
+</section>
 
-  <!-- Before & After Gallery -->
-  <section id="gallery" class="py-12">
-    <div class="container mx-auto text-center">
-      <h3 class="text-2xl font-bold text-blue-700 mb-6">Before & After</h3>
-      <div class="grid md:grid-cols-2 gap-6">
-        <img src="before and after.png" alt="Before and After 1" class="rounded shadow">
-        <img src="bfr and aftr.jpg" alt="Before and After 2" class="rounded shadow">
-      </div>
-    </div>
-  </section>
+<section id="gallery" class="card">
+<h2 class="text-2xl font-bold">Before & After</h2>
+<div class="grid md:grid-cols-3 gap-4">
+<img src="before and after.png">
+<img src="bfr and aftr.jpg">
+<img src="gallery3.jpg">
+</div>
+</section>
 
-  <!-- Appointment Form -->
-  <section id="appointment" class="py-12 bg-gray-100">
-    <div class="container mx-auto max-w-lg">
-      <h3 class="text-2xl font-bold text-blue-700 text-center mb-6">Book an Appointment</h3>
-      <form action="https://formsubmit.co/delightdentalservices@gmail.com" method="POST" class="bg-white p-6 rounded shadow space-y-4">
-        <input type="hidden" name="_captcha" value="false">
-        <div>
-          <label class="block mb-1 font-semibold">Full Name</label>
-          <input type="text" name="name" required class="w-full border p-2 rounded">
-        </div>
-        <div>
-          <label class="block mb-1 font-semibold">Email</label>
-          <input type="email" name="email" required class="w-full border p-2 rounded">
-        </div>
-        <div>
-          <label class="block mb-1 font-semibold">Phone</label>
-          <input type="tel" name="phone" required class="w-full border p-2 rounded">
-        </div>
-        <div>
-          <label class="block mb-1 font-semibold">Preferred Date</label>
-          <input type="date" name="date" class="w-full border p-2 rounded">
-        </div>
-        <div>
-          <label class="block mb-1 font-semibold">Message</label>
-          <textarea name="message" rows="3" class="w-full border p-2 rounded"></textarea>
-        </div>
-        <button type="submit" class="bg-blue-700 text-white px-6 py-2 rounded shadow hover:bg-blue-800">Submit</button>
-      </form>
-    </div>
-  </section>
+<section id="store" class="card">
+<h2 class="text-2xl font-bold">Our Store</h2>
+<a href="store.html" class="bg-green-600 text-white px-4 py-2 rounded">Visit Store</a>
+</section>
 
-  <!-- Comments Button -->
-  <div class="mt-6 flex justify-center">
-    <a href="Comment.html"
-       class="inline-block w-full sm:w-auto text-center bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-green-700 font-semibold transition">
-      COMMENTS
-    </a>
-  </div>
+<section id="appointment" class="card">
+<h2 class="text-2xl font-bold">Book Appointment</h2>
+<form action="https://formsubmit.co/mubsbatir@gmail.com" method="POST">
+<input type="hidden" name="_captcha" value="false">
+<input type="text" name="name" placeholder="Full Name" required class="border p-2 w-full mb-2">
+<input type="email" name="email" placeholder="Email" required class="border p-2 w-full mb-2">
+<input type="tel" name="phone" placeholder="Phone" required class="border p-2 w-full mb-2">
+<input type="date" name="date" required class="border p-2 w-full mb-2">
+<input type="time" name="time" required class="border p-2 w-full mb-2">
+<textarea name="message" placeholder="Message" class="border p-2 w-full mb-2"></textarea>
+<button type="submit">Submit</button>
+</form>
+</section>
 
-  <!-- Contact Section -->
-  <section id="contact" class="py-12">
-    <div class="container mx-auto text-center">
-      <h3 class="text-2xl font-bold text-blue-700 mb-6">Contact Us</h3>
-      <p><strong>Address:</strong> No.53 Atiku Abubakar Road, National Supply, Jimeta, Yola</p>
-      <p><strong>Phone/WhatsApp:</strong> <a href="https://wa.me/2347060809088" class="text-blue-700 underline">07060809088</a></p>
-      <p><strong>Email:</strong> <a href="mailto:delightdentalservices@gmail.com" class="text-blue-700 underline">delightdentalservices@gmail.com</a></p>
-      <div class="mt-4">
-        <a href="https://www.facebook.com/share/1B7yK5tZLw/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Facebook</a>
-        <a href="https://wa.me/2347060809088" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Chat on WhatsApp</a>
-      </div>
-    </div>
-  </section>
+<section class="card">
+<h2 class="text-2xl font-bold">Google Reviews</h2>
+<div class="elfsight-app-79670633-6b9f-4cb3-a918-d13eff0c455b"></div>
+</section>
 
-  <!-- Footer -->
-  <footer class="bg-blue-700 text-white text-center p-4 mt-6">
-    <p>&copy; 2025 Delight Dental Services. All Rights Reserved.</p>
-  </footer>
+<footer class="bg-blue-800 text-white text-center p-6 mt-10">
+<p class="font-bold">Contact Us</p>
+<p>📞 07060809088</p>
+<p>📧 mubsbatir@gmail.com</p>
+<p>No.53 Atiku Abubakar Road, Jimeta Yola</p>
+<p class="mt-2">© 2026 Delight Dental Care</p>
+</footer>
+
+<script>
+function toggle(id){document.getElementById(id).classList.toggle('hidden')}
+function toggleMenu(id){document.getElementById(id).classList.toggle('hidden')}
+function toggleService(el){
+const desc=el.querySelector(".service-desc");
+const btn=desc.querySelector(".read-btn");
+desc.classList.toggle("show");
+btn.classList.toggle("show");
+}
+</script>
+
+<!-- ✅ ONE Elfsight loader for ALL widgets -->
+<script src="https://elfsightcdn.com/platform.js" async></script>
+
+<!-- Widgets -->
+<div class="elfsight-app-7eac9e0d-d4ca-43a7-ae44-50db18ae9c5c"></div>
+<div class="elfsight-app-1f52e880-8185-46d0-a458-a5510f833f07"></div>
+<div class="elfsight-app-b7b9b9ad-3547-4226-aca4-d385711522d1"></div>
+<div class="elfsight-app-38141783-309d-4fcb-87d7-2909533483b2"></div>
 
 </body>
-  </html>
+                                                                  </html>
