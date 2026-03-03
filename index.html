@@ -1,0 +1,225 @@
+Enter<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Delight Dental Care | Best Dentist in Jimeta Yola, Adamawa</title>
+<meta name="description" content="Delight Dental Care Jimeta Yola. Modern, affordable, and painless dental treatments including teeth whitening, braces, dentures, and cleaning. Visit us at Atiku Abubakar Road.">
+<meta name="keywords" content="Dentist Jimeta, Dental clinic Yola, Teeth whitening Nigeria, Dentist Adamawa, Braces Yola, Delight Dental Care">
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<style>
+/* Design & Color Palette */
+body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #f0f4f8; color: #334155; }
+header { background: linear-gradient(135deg, #0b5ed7 0%, #0849a3 100%); color: white; text-align: center; padding: 40px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.hidden { display: none; }
+
+/* Enhanced Cards */
+.card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); margin: 25px auto; max-width: 1100px; border: 1px solid #e2e8f0; }
+h2 { color: #0b5ed7; border-left: 4px solid #0b5ed7; padding-left: 15px; margin-bottom: 20px; }
+
+/* Buttons & Navigation */
+button { background: #0b5ed7; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; transition: 0.3s; cursor: pointer; border: none; }
+button:hover { background: #094db1; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(11, 94, 215, 0.3); }
+
+/* Marquee Styles */
+.marquee-wrap { overflow: hidden; background: #ffffff; padding: 15px 0; margin: 20px auto; max-width: 1100px; border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+.marquee-track { display: flex; gap: 2.5rem; animation: marquee 10s linear infinite; width: max-content; }
+.marquee-item img { height: 80px; border-radius: 8px; filter: grayscale(20%); transition: 0.3s; }
+.marquee-item img:hover { filter: grayscale(0%); }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Service Box Enhancements */
+.service-box { background: #f8faff; border: 1px solid #eef2f7; border-radius: 12px; padding: 12px; position: relative; cursor: pointer; transition: 0.3s; text-align: center; }
+.service-box:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.08); background: #ffffff; }
+.service-box img { border-radius: 8px; margin-bottom: 10px; width: 100%; height: 160px; object-fit: cover; }
+.service-box span { position: absolute; bottom: 15px; left: 10px; right: 10px; background: rgba(11, 94, 215, 0.85); color: white; font-size: 13px; font-weight: bold; padding: 6px; border-radius: 6px; backdrop-filter: blur(4px); }
+
+/* Service Descriptions */
+.service-desc { opacity: 0; max-height: 0; overflow: hidden; transition: 0.4s ease; font-size: 14px; color: #64748b; line-height: 1.6; }
+.service-desc.show { opacity: 1; max-height: 300px; margin-top: 12px; padding-bottom: 40px; }
+.read-btn { display: none; margin-top: 10px; background: #10b981; padding: 8px 16px; border-radius: 6px; color: white; font-size: 13px; font-weight: bold; text-decoration: none; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); }
+.read-btn.show { display: block; }
+.read-btn:hover { background: #059669; }
+
+/* Form Styling */
+input, textarea { border: 1px solid #cbd5e1 !important; border-radius: 6px !important; padding: 12px !important; transition: 0.3s; }
+input:focus, textarea:focus { border-color: #0b5ed7 !important; ring: 2px #0b5ed7; outline: none; }
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo.png" alt="Delight Dental Care Logo" class="mx-auto h-20 w-20 rounded-full border-4 border-white mb-4 shadow-lg">
+<h1 class="text-4xl font-extrabold tracking-tight">Delight Dental Care</h1>
+<p class="text-blue-100 text-lg font-medium italic">Your Smile Is Our Priority</p>
+</header>
+
+<nav class="bg-blue-900 text-white text-center p-4 sticky top-0 z-50 shadow-md">
+<span onclick="toggleMenu('menu')" class="cursor-pointer font-bold flex items-center justify-center gap-2">
+    MENU <small>▼</small>
+</span>
+</nav>
+
+<div id="menu" class="hidden bg-blue-800 text-white text-center p-4 transition-all duration-300">
+<a onclick="toggle('about')" class="block py-3 hover:bg-blue-700 rounded transition font-medium cursor-pointer">About Us</a>
+<a href="#services" class="block py-3 hover:bg-blue-700 rounded transition font-medium">Our Services</a>
+<a href="#gallery" class="block py-3 hover:bg-blue-700 rounded transition font-medium">Before & After</a>
+<a href="#store" class="block py-3 hover:bg-blue-700 rounded transition font-medium text-green-300">Dental Store</a>
+<a href="#appointment" class="block py-3 hover:bg-blue-700 rounded transition font-medium">Book Appointment</a>
+</div>
+
+<div class="marquee-wrap">
+<div class="marquee-track">
+<div class="marquee-item"><img src="0f1520c716f2ca9_file_00000000f2406246800d673e4597d2c7_wm.png" alt="Dental Equipment"></div>
+<div class="marquee-item"><img src="toothbrush.png" alt="Oral Care"></div>
+<div class="marquee-item"><img src="file_00000000e4b861fab7a7f0af954e6327.png" alt="Dental Product"></div>
+<div class="marquee-item"><img src="powder.png" alt="Cleaning Powder"></div>
+<div class="marquee-item"><img src="0f1520c716f2ca9_file_00000000f2406246800d673e4597d2c7_wm.png" alt="Dental Equipment"></div>
+<div class="marquee-item"><img src="toothbrush.png" alt="Oral Care"></div>
+<div class="marquee-item"><img src="file_00000000e4b861fab7a7f0af954e6327.png" alt="Dental Product"></div>
+<div class="marquee-item"><img src="powder.png" alt="Cleaning Powder"></div>
+</div>
+</div>
+
+<div class="elfsight-app-5385b60c-c9cd-44ed-ab54-39d10b3b94ee"></div>
+
+<section id="about" class="card hidden">
+<h2 class="text-2xl font-bold">About Us</h2>
+<p class="mb-6 text-gray-600 text-lg leading-relaxed">
+    Delight Dental Care provides <strong>modern, affordable, and painless</strong> dental treatment in Jimeta Yola. Our team is dedicated to restoring your confidence through world-class oral healthcare.
+</p>
+<div class="elfsight-app-8df52f6b-8e49-470a-a957-aa98f0b213f7"></div>
+</section>
+
+<section id="services" class="card">
+<h2 class="text-2xl font-bold mb-6">Our Services</h2>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="scaling and polishing1.png" alt="Cleaning"><span>Cleaning & Polishing</span>
+<p class="service-desc">Professional removal of plaque and stains to restore natural shine.<a href="cleaning.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="teeth whitening1.png" alt="Whitening"><span>Teeth Whitening</span>
+<p class="service-desc">Advanced whitening systems for a brighter, more beautiful smile.<a href="whitening.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="compo.jpg.jpg" alt="Fillings"><span>Dental Fillings</span>
+<p class="service-desc">Composite tooth-colored fillings to repair cavities seamlessly.<a href="fillings.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="root canal.jpg" alt="Root Canal"><span>Root Canal</span>
+<p class="service-desc">Painless procedures to save your natural teeth from infection.<a href="root-canal.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="extraction.jpg" alt="Extraction"><span>Extraction</span>
+<p class="service-desc">Safe and gentle removal of damaged or wisdom teeth.<a href="extraction.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="gum.jpg" alt="Gum Care"><span>Gum Treatment</span>
+<p class="service-desc">Therapy for bleeding gums and periodontal health management.<a href="gum.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="braces.jpg" alt="Braces"><span>Braces</span>
+<p class="service-desc">Traditional and modern orthodontic solutions to straighten teeth.<a href="braces.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="general check.jpg" alt="Checkups"><span>Checkups</span>
+<p class="service-desc">Comprehensive oral exams to detect issues before they become pain.<a href="checkup.html" class="read-btn">Read More</a></p>
+</div>
+
+<div onclick="toggleService(this)" class="service-box">
+<img src="denture.jpg" alt="Dentures"><span>Dentures</span>
+<p class="service-desc">Custom-fitted artificial teeth for comfort and natural look.<a href="dentures.html" class="read-btn">Read More</a></p>
+</div>
+
+</div>
+</section>
+
+<section id="gallery" class="card">
+<h2 class="text-2xl font-bold mb-4 text-center md:text-left">Before & After Results</h2>
+<div class="grid md:grid-cols-3 gap-6">
+<img src="before and after.png" class="rounded-lg shadow hover:opacity-90 transition cursor-zoom-in" alt="Transformation 1">
+<img src="bfr and aftr.jpg" class="rounded-lg shadow hover:opacity-90 transition cursor-zoom-in" alt="Transformation 2">
+<img src="gallery3.jpg" class="rounded-lg shadow hover:opacity-90 transition cursor-zoom-in" alt="Transformation 3">
+</div>
+</section>
+
+<section id="store" class="card text-center py-10">
+<h2 class="text-2xl font-bold mb-4">Our Store</h2>
+<p class="mb-6 text-gray-500 italic">Get the best dental care products delivered to you.</p>
+<a href="store.html" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-3 rounded-full transition transform hover:scale-105 shadow-md">Visit Store</a>
+</section>
+
+<section id="appointment" class="card">
+<h2 class="text-2xl font-bold">Book Your Appointment</h2>
+<form action="https://formsubmit.co/mubsbatir@gmail.com" method="POST" class="mt-4">
+<input type="hidden" name="_captcha" value="false">
+<div class="grid md:grid-cols-2 gap-4">
+    <input type="text" name="name" placeholder="Full Name" required class="border p-3 w-full mb-2">
+    <input type="email" name="email" placeholder="Email Address" required class="border p-3 w-full mb-2">
+</div>
+<div class="grid md:grid-cols-3 gap-4">
+    <input type="tel" name="phone" placeholder="Phone (e.g. 080...)" required class="border p-3 w-full mb-2">
+    <input type="date" name="date" required class="border p-3 w-full mb-2">
+    <input type="time" name="time" required class="border p-3 w-full mb-2">
+</div>
+<textarea name="message" placeholder="Briefly describe your dental concern..." class="border p-3 w-full mb-4 h-32"></textarea>
+<button type="submit" class="w-full md:w-auto">Confirm Booking Request</button>
+</form>
+</section>
+
+<section class="card">
+<h2 class="text-2xl font-bold">Patient Reviews</h2>
+<div class="elfsight-app-79670633-6b9f-4cb3-a918-d13eff0c455b"></div>
+</section>
+
+<footer class="bg-blue-900 text-white text-center p-10 mt-16">
+<div class="max-w-4xl mx-auto">
+    <p class="font-bold text-xl mb-4 text-blue-300 underline">Contact Us</p>
+    <div class="grid md:grid-cols-3 gap-6 text-sm">
+        <p>📞 <a href="tel:07060809088" class="hover:text-blue-300">07060809088</a></p>
+        <p>📧 <a href="mailto:mubsbatir@gmail.com" class="hover:text-blue-300">mubsbatir@gmail.com</a></p>
+        <p>📍 No.53 Atiku Abubakar Road, Jimeta Yola</p>
+    </div>
+    <div class="mt-10 pt-6 border-t border-blue-800 text-blue-400 text-xs">
+        <p>© 2026 Delight Dental Care. Licensed Medical Practice in Nigeria.</p>
+    </div>
+</div>
+</footer>
+
+<script>
+function toggle(id){document.getElementById(id).classList.toggle('hidden')}
+function toggleMenu(id){document.getElementById(id).classList.toggle('hidden')}
+function toggleService(el){
+const desc=el.querySelector(".service-desc");
+const btn=desc.querySelector(".read-btn");
+// Close all other services first
+document.querySelectorAll('.service-desc').forEach(d => { if(d !== desc) d.classList.remove('show'); });
+document.querySelectorAll('.read-btn').forEach(b => { if(b !== btn) b.classList.remove('show'); });
+// Toggle the clicked one
+desc.classList.toggle("show");
+btn.classList.toggle("show");
+}
+</script>
+
+<script src="https://elfsightcdn.com/platform.js" async></script>
+
+<div class="elfsight-app-7eac9e0d-d4ca-43a7-ae44-50db18ae9c5c"></div>
+<div class="elfsight-app-1f52e880-8185-46d0-a458-a5510f833f07"></div>
+<div class="elfsight-app-b7b9b9ad-3547-4226-aca4-d385711522d1"></div>
+<div class="elfsight-app-38141783-309d-4fcb-87d7-2909533483b2"></div>
+
+</body>
+  </html>
