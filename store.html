@@ -10,361 +10,326 @@
 
     <style>
         :root { --brand: #0d9488; --slate: #0f172a; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: var(--slate); overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: var(--slate); scroll-behavior: smooth; }
         
+        /* Fixed UI Layers */
+        .sidebar-admin { background: white; border-right: 6px solid var(--brand); height: 100vh; position: fixed; left: 0; top: 0; width: 380px; z-index: 2000; display: none; box-shadow: 25px 0 60px rgba(0,0,0,0.1); }
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 1500; display: none; backdrop-filter: blur(6px); }
+        #auth-modal { z-index: 3000; }
+
+        /* Buttons & Cards */
         .adm-btn { font-weight: 800; border-radius: 12px; border-bottom: 4px solid rgba(0,0,0,0.15); transition: 0.1s; cursor: pointer; text-align: center; font-size: 10px; padding: 12px; display: inline-block; width: 100%; text-transform: uppercase; }
         .adm-btn:active { border-bottom: 0; transform: translateY(2px); }
         .btn-green { background: #10b981 !important; color: white !important; border-color: #065f46; }
-        .btn-wa { background: #25d366 !important; color: white !important; border-color: #128c7e; }
         .btn-blue { background: #2563eb !important; color: white !important; border-color: #1e40af; }
         .btn-neutral { background: #64748b !important; color: white !important; border-color: #334155; }
+        .btn-wa { background: #25d366 !important; color: white !important; border-color: #128c7e; }
 
-        .sidebar-admin { background: white; border-right: 6px solid var(--brand); height: 100vh; position: fixed; left: 0; top: 0; width: 420px; z-index: 1000; display: none; box-shadow: 25px 0 60px rgba(0,0,0,0.1); }
-        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 999; display: none; backdrop-filter: blur(6px); }
-        
-        .product-card { background: white; border: 2px solid #f1f5f9; border-radius: 24px; overflow: hidden; transition: 0.3s; position: relative; display: flex; flex-direction: column; height: 100%; }
-        .product-card:hover { border-color: var(--brand); transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .sold-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: 24px; }
-        
-        .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scroll-behavior: smooth; }
-        .cat-btn { flex: 0 0 auto; padding: 10px 20px; background: white; border: 2px solid #e2e8f0; border-radius: 50px; font-size: 11px; font-weight: 800; }
+        .product-card { background: white; border: 2px solid #f1f5f9; border-radius: 24px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; height: 100%; position: relative; }
+        .product-card:hover { border-color: var(--brand); transform: translateY(-4px); }
+        .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; }
+        .cat-btn { flex: 0 0 auto; padding: 10px 20px; background: white; border: 2px solid #e2e8f0; border-radius: 50px; font-size: 11px; font-weight: 800; cursor: pointer; }
         .cat-btn.active { background: var(--brand); color: white; border-color: var(--brand); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .bar-transition { transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        .verified-badge { background: linear-gradient(135deg, #0d9488, #10b981); color: white; padding: 2px 8px; border-radius: 6px; font-size: 8px; font-weight: 900; text-transform: uppercase; }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body>
 
-<div id="admin-overlay" class="overlay" onclick="toggleAdmin()"></div>
+<div id="ui-overlay" class="overlay" onclick="closeAll()"></div>
 
 <aside id="admin-sidebar" class="sidebar-admin overflow-y-auto p-8">
     <div class="flex justify-between items-center mb-8 border-b pb-6">
-        <div class="flex items-center gap-3">
-            <img id="side-co-logo" src="https://via.placeholder.com/40?text=LOGO" class="w-10 h-10 rounded-lg object-cover bg-slate-100 border">
-            <div>
-                <h2 class="text-lg font-black text-slate-900 uppercase leading-none">Command Center</h2>
-                <p class="text-[9px] font-bold text-teal-600 mt-1 uppercase">Delight Dental & Medical Store</p>
-            </div>
+        <div>
+            <h2 class="text-xl font-black uppercase">Admin Desk</h2>
+            <p class="text-[9px] font-bold text-teal-600">Master Control</p>
         </div>
-        <button onclick="toggleAdmin()" class="text-xl bg-slate-100 w-10 h-10 rounded-full">✕</button>
+        <button onclick="closeAll()" class="text-xl bg-slate-100 w-10 h-10 rounded-full">✕</button>
     </div>
 
-    <div class="mb-6 p-5 bg-slate-50 border-2 border-slate-200 rounded-3xl">
-        <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">⚙️ Global Branding</h3>
-        <label class="adm-btn btn-neutral !w-auto px-4 cursor-pointer text-[9px]">CHANGE MAIN LOGO 
-            <input type="file" id="co-logo-input" class="hidden" onchange="updateCompanyLogo(this.files[0])">
-        </label>
-    </div>
-
-    <div class="mb-6 p-5 bg-blue-50 border-2 border-blue-100 rounded-3xl">
-        <h3 class="text-[10px] font-black text-blue-700 uppercase mb-4 tracking-widest">📊 Lead Intelligence</h3>
-        <div class="flex justify-between items-end h-24 gap-3 mb-4">
-            <div class="flex-1 flex flex-col items-center gap-2">
-                <div id="bar-wa" class="bg-green-500 w-full rounded-t-xl bar-transition" style="height: 0%"></div>
-                <span class="text-[8px] font-black">WhatsApp</span>
-            </div>
-            <div class="flex-1 flex flex-col items-center gap-2">
-                <div id="bar-call" class="bg-blue-600 w-full rounded-t-xl bar-transition" style="height: 0%"></div>
-                <span class="text-[8px] font-black">Direct Calls</span>
-            </div>
+    <div class="space-y-6">
+        <div class="p-5 bg-slate-50 border-2 border-slate-200 rounded-3xl">
+            <h3 class="text-[10px] font-black text-slate-500 uppercase mb-4">Branding</h3>
+            <label class="adm-btn btn-neutral !w-auto px-4 cursor-pointer text-[9px]">
+                Update Site Logo <input type="file" class="hidden" onchange="handleLogoUpload(this.files[0])">
+            </label>
         </div>
-        <div class="flex justify-between text-[10px] font-bold">
-            <span class="text-green-600">Total WA: <span id="txt-wa">0</span></span>
-            <span class="text-blue-600">Total Calls: <span id="txt-call">0</span></span>
-        </div>
-    </div>
 
-    <div class="mb-6 p-5 bg-white border-2 border-slate-100 rounded-3xl">
-        <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">👥 Partners</h3>
-        <div id="merchant-list" class="space-y-3"></div>
+        <div class="p-5 bg-white border-2 border-slate-100 rounded-3xl">
+            <h3 class="text-[10px] font-black text-teal-600 uppercase mb-4 tracking-widest">Partner Approvals</h3>
+            <div id="admin-merchants" class="space-y-4"></div>
+        </div>
+
+        <div class="p-5 bg-amber-50 border-2 border-amber-100 rounded-3xl">
+            <h3 class="text-[10px] font-black text-amber-700 uppercase mb-4 tracking-widest">Pending Listings</h3>
+            <div id="admin-products" class="space-y-3"></div>
+        </div>
     </div>
 </aside>
 
-<nav class="bg-white border-b-4 border-teal-600 sticky top-0 z-50 py-4 px-6">
+<nav class="bg-white border-b-4 border-teal-600 sticky top-0 z-[1000] py-4 px-6 shadow-sm">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
-            <img id="nav-co-logo" src="https://via.placeholder.com/40?text=LOGO" class="w-10 h-10 rounded-xl border object-cover shadow-sm bg-slate-50">
+            <img id="main-logo" src="https://via.placeholder.com/40?text=LOGO" class="w-10 h-10 rounded-xl border object-cover">
             <div>
-                <h1 class="text-lg font-black text-slate-900 uppercase tracking-tighter leading-none">Delight Dental</h1>
-                <p class="text-[9px] font-black text-teal-600 uppercase tracking-widest mt-0.5">& Medical Store</p>
+                <h1 class="text-lg font-black text-slate-900 uppercase leading-none">Delight Dental</h1>
+                <p class="text-[9px] font-black text-teal-600 uppercase mt-0.5">Medical Store</p>
             </div>
         </div>
-        <div id="nav-actions" class="flex items-center gap-4">
-            <div id="logged-in-zone" class="hidden flex items-center gap-4">
-                <button id="master-admin-btn" onclick="toggleAdmin()" class="hidden adm-btn btn-neutral !w-auto !py-2 px-6">Admin Panel</button>
-                <img id="nav-avatar" class="w-10 h-10 rounded-full border-2 border-teal-500 object-cover shadow-sm">
+        <div class="flex items-center gap-4">
+            <div id="logged-in-ui" class="hidden flex items-center gap-4">
+                <button id="admin-btn" onclick="openAdmin()" class="hidden adm-btn btn-neutral !w-auto !py-2 px-6">Admin Panel</button>
                 <button onclick="location.reload()" class="text-[10px] font-black text-red-500 uppercase underline">Logout</button>
             </div>
-            <button id="login-trigger" onclick="openAuth()" class="adm-btn btn-green !w-auto px-8">Partner Portal</button>
+            <button id="auth-trigger" onclick="openAuth()" class="adm-btn btn-green !w-auto px-8">Portal Access</button>
         </div>
     </div>
 </nav>
 
 <div class="max-w-7xl mx-auto px-6 mt-8">
-    <div class="relative bg-white p-1 rounded-2xl border-2 border-slate-100 flex items-center gap-3 mb-6 shadow-sm">
+    <div class="relative bg-white p-1 rounded-2xl border-2 border-slate-100 flex items-center gap-3 mb-8 shadow-sm">
         <span class="ml-4">🔍</span>
-        <input type="text" id="mainSearch" placeholder="Search equipment, tools, or brands..." class="w-full p-4 outline-none font-semibold text-slate-600" onkeyup="handleSearch(this.value)">
+        <input type="text" id="site-search" placeholder="Search for equipment..." class="w-full p-4 outline-none font-semibold text-slate-600" onkeyup="doSearch(this.value)">
     </div>
 
-    <div class="cat-scroll scrollbar-hide mb-8">
-        <button class="cat-btn active" onclick="filterByCat('All', this)">All Items</button>
-        <button class="cat-btn" onclick="filterByCat('filling materials', this)">Filling Materials</button>
-        <button class="cat-btn" onclick="filterByCat('dental equipments', this)">Dental Equipments</button>
-        <button class="cat-btn" onclick="filterByCat('oral care', this)">Oral Care</button>
-        <button class="cat-btn" onclick="filterByCat('lab materials', this)">Lab Materials</button>
-        <button class="cat-btn" onclick="filterByCat('lab equipments', this)">Lab Equipments</button>
-        <button class="cat-btn" onclick="filterByCat('consumables', this)">Consumables</button>
-        <button class="cat-btn" onclick="filterByCat('others', this)">Others</button>
+    <div class="cat-scroll scrollbar-hide mb-4">
+        <button class="cat-btn active" onclick="filterBy('All', this)">All Supply</button>
+        <button class="cat-btn" onclick="filterBy('dental equipments', this)">Equipments</button>
+        <button class="cat-btn" onclick="filterBy('filling materials', this)">Materials</button>
+        <button class="cat-btn" onclick="filterBy('consumables', this)">Consumables</button>
     </div>
 
-    <main id="store-workspace" class="mb-12" style="display:none">
-        <div class="bg-white rounded-[2.5rem] p-10 border-2 border-teal-100 shadow-2xl">
-            <h2 class="text-2xl font-black mb-8 uppercase tracking-tighter">Add to Marketplace</h2>
-            <form id="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="space-y-5">
-                    <input type="text" id="itemName" placeholder="Product Name" class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none" required>
-                    <select id="itemCategory" class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none font-bold">
-                        <option value="filling materials">Filling Materials</option>
+    <main id="partner-panel" class="mb-12 hidden">
+        <div class="bg-white rounded-[2.5rem] p-8 border-2 border-teal-100 shadow-xl">
+            <h2 class="text-xl font-black mb-6 uppercase">Post Equipment</h2>
+            <form id="listing-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <input type="text" id="f-name" placeholder="Product Name" class="w-full p-4 bg-slate-50 border rounded-xl outline-none" required>
+                    <select id="f-cat" class="w-full p-4 bg-slate-50 border rounded-xl font-bold">
                         <option value="dental equipments">Dental Equipments</option>
-                        <option value="oral care">Oral Care</option>
-                        <option value="lab materials">Lab Materials</option>
-                        <option value="lab equipments">Lab Equipments</option>
+                        <option value="filling materials">Filling Materials</option>
                         <option value="consumables">Consumables</option>
-                        <option value="others">Others</option>
                     </select>
-                    <input type="number" id="itemPrice" placeholder="Price (₦)" class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none" required>
-                    <textarea id="itemDesc" placeholder="Full specifications..." class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl h-32 outline-none" required></textarea>
+                    <input type="number" id="f-price" placeholder="Price (₦)" class="w-full p-4 bg-slate-50 border rounded-xl outline-none" required>
+                    <textarea id="f-desc" placeholder="Details..." class="w-full p-4 bg-slate-50 border rounded-xl h-24 outline-none" required></textarea>
                 </div>
-                <div class="space-y-6">
-                    <div class="grid grid-cols-5 gap-3">
-                        <label class="bg-slate-100 aspect-square rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-300 cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.background='#0d9488'">+</label>
-                        <label class="bg-slate-100 aspect-square rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-300 cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.background='#0d9488'">+</label>
-                        <label class="bg-slate-100 aspect-square rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-300 cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.background='#0d9488'">+</label>
-                        <label class="bg-slate-100 aspect-square rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-300 cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.background='#0d9488'">+</label>
-                        <label class="bg-slate-100 aspect-square rounded-2xl flex items-center justify-center border-2 border-dashed border-slate-300 cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.background='#0d9488'">+</label>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-4 gap-2">
+                        <label class="bg-slate-100 aspect-square rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.borderColor='#0d9488'">+</label>
+                        <label class="bg-slate-100 aspect-square rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.borderColor='#0d9488'">+</label>
+                        <label class="bg-slate-100 aspect-square rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.borderColor='#0d9488'">+</label>
+                        <label class="bg-slate-100 aspect-square rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer"><input type="file" class="hidden img-slot" onchange="this.parentElement.style.borderColor='#0d9488'">+</label>
                     </div>
-                    <button type="submit" id="submitBtn" class="adm-btn btn-green !py-6 text-sm">Submit Item</button>
+                    <button type="submit" class="adm-btn btn-green !py-5">Submit for Review</button>
                 </div>
             </form>
         </div>
     </main>
 
-    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-24"></div>
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-12"></div>
 </div>
 
-<div id="auth-modal" class="fixed inset-0 bg-slate-900/95 z-[110] flex items-center justify-center p-4" style="display:none">
-    <div class="bg-white w-full max-w-md p-10 rounded-[3rem] border-4 border-teal-500 relative shadow-2xl">
-        <button onclick="document.getElementById('auth-modal').style.display='none'" class="absolute top-8 right-8 text-2xl font-bold">✕</button>
-        <div id="login-box" class="text-center">
-            <img id="auth-co-logo" src="https://via.placeholder.com/60?text=LOGO" class="w-16 h-16 rounded-2xl border object-cover mx-auto mb-4 bg-slate-50">
-            <h2 class="text-2xl font-black mb-1 uppercase tracking-tighter">Partner Portal</h2>
-            <input type="text" id="l-user" placeholder="Clinic Name" class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl mb-4 outline-none font-bold">
-            <input type="password" id="l-pass" placeholder="Password" class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl mb-8 outline-none font-bold">
-            <button onclick="handleLogin()" class="adm-btn btn-green !py-5">Login</button>
-            <p onclick="toggleAuth(true)" class="text-center mt-8 text-xs font-black text-teal-600 underline cursor-pointer uppercase">New Clinic Registration</p>
+<div id="auth-modal" class="fixed inset-0 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-sm p-10 rounded-[2.5rem] border-4 border-teal-500 shadow-2xl relative">
+        <button onclick="closeAll()" class="absolute top-6 right-6 font-bold">✕</button>
+        
+        <div id="login-form">
+            <h2 class="text-2xl font-black mb-8 text-center uppercase">Portal Login</h2>
+            <input type="text" id="l-user" placeholder="Username" class="w-full p-4 bg-slate-50 border-2 rounded-xl mb-3 outline-none font-bold">
+            <input type="password" id="l-pass" placeholder="Password" class="w-full p-4 bg-slate-50 border-2 rounded-xl mb-6 outline-none font-bold">
+            <button onclick="handleLogin()" class="adm-btn btn-green !py-4">Sign In</button>
+            <p onclick="toggleView(true)" class="text-center mt-6 text-[10px] font-black text-teal-600 underline cursor-pointer uppercase">New Clinic Registration</p>
         </div>
-        <div id="reg-box" class="hidden">
-            <h2 class="text-2xl font-black mb-6 uppercase">Application</h2>
+
+        <div id="reg-form" class="hidden">
+            <h2 class="text-xl font-black mb-6 uppercase">Register</h2>
             <div class="space-y-3">
-                <input type="text" id="r-user" placeholder="Business Name" class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl">
-                <input type="text" id="r-loc" placeholder="City" class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl">
-                <input type="number" id="r-wa" placeholder="WhatsApp Number" class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl">
-                <input type="password" id="r-pass" placeholder="Password" class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl">
-                <button onclick="handleReg()" id="regBtn" class="adm-btn btn-green !py-5 uppercase mt-4">Submit</button>
+                <input type="text" id="r-user" placeholder="Business Name" class="w-full p-4 bg-slate-50 border rounded-xl outline-none">
+                <input type="email" id="r-email" placeholder="Email" class="w-full p-4 bg-slate-50 border rounded-xl outline-none">
+                <input type="number" id="r-wa" placeholder="WhatsApp Number" class="w-full p-4 bg-slate-50 border rounded-xl outline-none">
+                <input type="password" id="r-pass" placeholder="Password" class="w-full p-4 bg-slate-50 border rounded-xl outline-none">
+                <button onclick="handleReg()" class="adm-btn btn-green !py-4 uppercase mt-2">Submit</button>
+                <p onclick="toggleView(false)" class="text-center mt-4 text-[10px] font-bold text-slate-400 cursor-pointer">Back to Login</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // CONFIG
     const SB_URL = "https://kwwfmkyopczqbhvvbvud.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3d2Zta3lvcGN6cWJodnZidnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjEzNTIsImV4cCI6MjA4ODM5NzM1Mn0.Wnq9Uv8ZvGmrkLkGIE6BtTHRsp8gg3xiI0W88rIdBwo";
-    const _supabase = supabase.createClient(SB_URL, SB_KEY);
+    const _sb = supabase.createClient(SB_URL, SB_KEY);
     const MASTER_KEY = "mubsbatir";
-    let currentUser = null, selectedCat = 'All';
+    let currentUser = null, activeCat = 'All';
 
-    // BRANDING
-    const storedLogo = localStorage.getItem('co_logo') || "https://via.placeholder.com/80?text=LOGO";
-    function updateLogosUI(url) {
-        ['nav-co-logo', 'side-co-logo', 'auth-co-logo'].forEach(id => {
-            if(document.getElementById(id)) document.getElementById(id).src = url;
-        });
-        localStorage.setItem('co_logo', url);
+    // Logo & Visual Refresh
+    function loadBranding() {
+        const logo = localStorage.getItem('delight_logo') || "https://via.placeholder.com/40?text=DELIGHT";
+        document.getElementById('main-logo').src = logo;
     }
-    updateLogosUI(storedLogo);
+    loadBranding();
 
-    async function updateCompanyLogo(file) {
-        const url = await uploadFile(file, 'branding');
-        if(url) { updateLogosUI(url); alert("Store logo updated."); }
-    }
-
-    // CORE FUNCTIONS
-    async function uploadFile(file, folder = 'products') {
-        const ext = file.name.split('.').pop();
-        const path = `${folder}/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
-        const { error } = await _supabase.storage.from('product-images').upload(path, file);
-        if (error) return null;
-        return _supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    async function handleLogoUpload(file) {
+        const path = `branding/logo_${Date.now()}.png`;
+        const { error } = await _sb.storage.from('product-images').upload(path, file);
+        if(!error) {
+            const { data } = _sb.storage.from('product-images').getPublicUrl(path);
+            localStorage.setItem('delight_logo', data.publicUrl);
+            loadBranding();
+        }
     }
 
-    async function shareItem(name, price, id) {
-        const shareUrl = window.location.origin + window.location.pathname + '?id=' + id;
-        if(navigator.share) await navigator.share({ title: 'Delight Dental', text: `${name} - ₦${price.toLocaleString()}`, url: shareUrl });
-        else { await navigator.clipboard.writeText(shareUrl); alert("Link Copied!"); }
+    // Modal Control
+    function openAuth() { 
+        document.getElementById('ui-overlay').style.display = 'block';
+        document.getElementById('auth-modal').style.display = 'flex'; 
+    }
+    function openAdmin() {
+        document.getElementById('ui-overlay').style.display = 'block';
+        document.getElementById('admin-sidebar').style.display = 'block';
+        loadAdminData();
+    }
+    function closeAll() {
+        document.querySelectorAll('.overlay, #auth-modal, #admin-sidebar').forEach(el => el.style.display = 'none');
+    }
+    function toggleView(isReg) {
+        document.getElementById('login-form').classList.toggle('hidden', isReg);
+        document.getElementById('reg-form').classList.toggle('hidden', !isReg);
     }
 
-    async function handleOrder(owner, wa, pName, pId, type) {
-        try {
-            await _supabase.rpc('increment_leads', { row_id: pId });
-            const col = type === 'call' ? 'call_leads' : 'whatsapp_leads';
-            const { data: cur } = await _supabase.from('products').select(col).eq('id', pId).single();
-            const upd = {}; upd[col] = (cur[col] || 0) + 1;
-            await _supabase.from('products').update(upd).eq('id', pId);
-            
-            const clean = wa.replace(/\D/g, '');
-            if(type === 'call') window.location.href = `tel:+${clean}`;
-            else window.open(`https://wa.me/${clean}?text=Inquiry: ${pName} on Delight Dental.`);
-        } catch(e) { window.location.href = (type === 'call' ? `tel:${wa}` : `https://wa.me/${wa}`); }
-    }
-
-    async function admOp(table, id, update) {
-        const col = table === 'merchants' ? 'username' : 'id';
-        await _supabase.from(table).update(update).eq(col, id);
-        loadAdminData(); renderProducts();
-    }
-
-    async function admDel(t, id) { if(confirm("Delete?")) { await _supabase.from(t).delete().eq('id', id); renderProducts(); } }
-
-    function toggleAdmin() {
-        const s = document.getElementById('admin-sidebar'), o = document.getElementById('admin-overlay');
-        const show = s.style.display !== 'block';
-        s.style.display = o.style.display = show ? 'block' : 'none';
-        if(show) loadAdminData();
-    }
-
-    function openAuth() { document.getElementById('auth-modal').style.display='flex'; }
-    function toggleAuth(r) { document.getElementById('login-box').classList.toggle('hidden', r); document.getElementById('reg-box').classList.toggle('hidden', !r); }
-
+    // Auth Actions
     async function handleLogin() {
         const u = document.getElementById('l-user').value, p = document.getElementById('l-pass').value;
-        if (p === MASTER_KEY) currentUser = { username: "Admin", role: "admin", logo: "https://cdn-icons-png.flaticon.com/512/6024/6024190.png" };
+        if(p === MASTER_KEY) currentUser = { username: "Admin", role: "admin" };
         else {
-            const { data } = await _supabase.from('merchants').select('*').eq('username', u).single();
-            if (data && data.pass === p) {
-                if (data.status === 'suspended') return alert("Blocked.");
-                if (data.status !== 'active') return alert("Pending Review.");
+            const { data } = await _sb.from('merchants').select('*').eq('username', u).single();
+            if(data && data.pass === p) {
+                if(data.status !== 'active') return alert("Access pending admin verification.");
                 currentUser = data;
-                await _supabase.from('merchants').update({ last_seen: new Date().toISOString() }).eq('username', u);
-            } else return alert("Error.");
+            } else return alert("Invalid Username/Password");
         }
-        document.getElementById('auth-modal').style.display='none';
-        document.getElementById('login-trigger').style.display='none';
-        document.getElementById('logged-in-zone').classList.remove('hidden');
-        document.getElementById('store-workspace').style.display='block';
-        document.getElementById('nav-avatar').src = currentUser.logo;
-        if (currentUser.role === 'admin') document.getElementById('master-admin-btn').classList.remove('hidden');
-        renderProducts();
+        closeAll();
+        document.getElementById('auth-trigger').style.display = 'none';
+        document.getElementById('logged-in-ui').classList.remove('hidden');
+        document.getElementById('partner-panel').classList.remove('hidden');
+        if(currentUser.role === 'admin') document.getElementById('admin-btn').classList.remove('hidden');
+        renderGrid();
     }
 
     async function handleReg() {
-        const u = document.getElementById('r-user').value, l = document.getElementById('r-loc').value, 
+        const u = document.getElementById('r-user').value, e = document.getElementById('r-email').value,
               w = document.getElementById('r-wa').value, p = document.getElementById('r-pass').value;
-        await _supabase.from('merchants').insert([{ username:u, whatsapp:w, pass:p, location:l, status:'pending' }]);
-        location.reload();
+        await _sb.from('merchants').insert([{ username:u, email:e, whatsapp:w, pass:p, status:'pending' }]);
+        alert("Success! Admin review started."); location.reload();
     }
 
-    async function renderProducts() {
-        const { data: products } = await _supabase.from('products').select('*').order('featured', { ascending: false }).order('created_at', { ascending: false });
+    // Main Content
+    async function renderGrid() {
+        const { data: products } = await _sb.from('products').select('*').order('created_at', { ascending: false });
         const grid = document.getElementById('product-grid'); grid.innerHTML = "";
         
         for (let p of products) {
             const isAdmin = currentUser?.role === 'admin';
-            if (selectedCat !== 'All' && p.category !== selectedCat) continue;
-            if (p.status !== 'active' && !isAdmin && p.owner !== currentUser?.username) continue;
-            const { data: mData } = await _supabase.from('merchants').select('*').eq('username', p.owner).single();
-            const isOnline = mData?.last_seen && (new Date() - new Date(mData.last_seen) < 30 * 60 * 1000);
-            const slider = p.images.map(img => `<img src="${img}" class="w-full h-64 object-contain bg-white">`).join('');
+            if(activeCat !== 'All' && p.category !== activeCat) continue;
+            if(p.status !== 'active' && !isAdmin && p.owner !== currentUser?.username) continue;
+
+            const { data: m } = await _sb.from('merchants').select('*').eq('username', p.owner).single();
+            const img = p.images[0] || "https://via.placeholder.com/300";
             
             grid.innerHTML += `
                 <div class="product-card">
-                    <div class="flex overflow-x-auto snap-x scrollbar-hide relative">${slider}
-                        ${p.sold ? `<div class="sold-overlay"><span class="bg-red-600 text-white font-black px-6 py-2 rounded-xl text-[10px] uppercase">Sold</span></div>` : ''}
-                        <button onclick="shareItem('${p.name}', ${p.price}, '${p.id}')" class="absolute top-4 right-4 bg-white/90 p-2 rounded-full shadow text-[9px] font-bold">🔗 SHARE</button>
-                    </div>
+                    <img src="${img}" class="w-full h-52 object-contain bg-white p-4">
                     <div class="p-6 flex-grow flex flex-col">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-[9px] font-black text-teal-600 uppercase tracking-widest">${p.category}</span>
-                            ${p.featured ? `<span class="verified-badge">Featured</span>` : ''}
-                        </div>
-                        <h3 class="font-extrabold text-slate-900 mb-1 text-sm uppercase">${p.name}</h3>
-                        <div class="flex items-center gap-2 text-[9px] font-black uppercase mb-4">
-                            <span class="text-slate-400">📍 ${mData?.location || 'Lagos'}</span>
-                            <div class="flex items-center gap-1">
-                                <span class="status-dot ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}"></span>
-                                <span class="${isOnline ? 'text-green-600' : 'text-slate-400'}">${isOnline ? 'Online' : 'Away'}</span>
-                            </div>
-                        </div>
+                        <span class="text-[8px] font-black text-teal-600 uppercase mb-2">${p.category}</span>
+                        <h3 class="text-sm font-black uppercase mb-4">${p.name}</h3>
                         <div class="mt-auto">
-                            <span class="text-2xl font-black text-slate-900 block mb-4">₦${p.price.toLocaleString()}</span>
+                            <span class="text-xl font-black block mb-4">₦${p.price.toLocaleString()}</span>
                             <div class="grid grid-cols-2 gap-2">
-                                <button onclick="handleOrder('${p.owner}','${mData?.whatsapp}','${p.name}','${p.id}', 'wa')" class="adm-btn btn-wa">WhatsApp</button>
-                                <button onclick="handleOrder('${p.owner}','${mData?.whatsapp}','${p.name}','${p.id}', 'call')" class="adm-btn btn-blue">Call</button>
+                                <button onclick="lead('${m?.whatsapp}','${p.name}','${p.id}','wa')" class="adm-btn btn-wa">WhatsApp</button>
+                                <button onclick="lead('${m?.whatsapp}','${p.name}','${p.id}','call')" class="adm-btn btn-blue">Call</button>
                             </div>
                         </div>
-                        ${(currentUser?.username === p.owner || isAdmin) ? `
-                            <div class="mt-4 pt-4 border-t flex flex-wrap gap-2">
-                                <button onclick="admOp('products','${p.id}',{sold:!p.sold})" class="text-[8px] font-bold underline ${p.sold?'text-green-600':'text-red-600'} uppercase">${p.sold?'Enable':'Sold'}</button>
-                                ${isAdmin ? `<button onclick="admOp('products','${p.id}',{status:'active'})" class="text-[8px] font-bold text-teal-600 underline uppercase">Approve</button>
-                                <button onclick="admOp('products','${p.id}',{featured:!p.featured})" class="text-[8px] font-bold text-amber-600 underline uppercase">Pin</button>
-                                <button onclick="admDel('products','${p.id}')" class="text-[8px] font-bold text-red-400 underline uppercase">Del</button>` : ''}
-                            </div>` : ''}
+                        ${isAdmin ? `<button onclick="admOp('products','${p.id}',{status:'active'})" class="mt-4 text-[8px] font-bold text-teal-600 underline uppercase">Approve Listing</button>` : ''}
                     </div>
                 </div>`;
         }
     }
 
-    async function loadAdminData() {
-        const { data: merchants } = await _supabase.from('merchants').select('*');
-        const mList = document.getElementById('merchant-list'); mList.innerHTML = "";
-        merchants?.forEach(m => {
-            mList.innerHTML += `<div class="bg-slate-50 p-3 rounded-2xl border flex justify-between items-center text-[10px] font-black"><div class="flex items-center gap-2"><span>${m.username}</span></div><div class="flex gap-2"><button onclick="admOp('merchants','${m.username}',{status:'suspended'})" class="text-red-500">LOCK</button><button onclick="admOp('merchants','${m.username}',{status:'active'})" class="text-teal-600">VERIFY</button></div></div>`;
-        });
-        const { data: allP } = await _supabase.from('products').select('whatsapp_leads, call_leads');
-        const tWA = allP.reduce((s, p) => s + (p.whatsapp_leads || 0), 0);
-        const tCL = allP.reduce((s, p) => s + (p.call_leads || 0), 0);
-        const max = Math.max(tWA, tCL, 1);
-        document.getElementById('bar-wa').style.height = `${(tWA/max)*100}%`;
-        document.getElementById('bar-call').style.height = `${(tCL/max)*100}%`;
-        document.getElementById('txt-wa').innerText = tWA;
-        document.getElementById('txt-call').innerText = tCL;
+    async function lead(num, name, id, type) {
+        await _sb.rpc('increment_leads', { row_id: id });
+        const clean = num.replace(/\D/g, '');
+        if(type === 'call') window.location.href = `tel:+${clean}`;
+        else window.open(`https://wa.me/${clean}?text=Inquiry: ${name}`);
     }
 
-    document.getElementById('productForm').addEventListener('submit', async (e) => {
+    // Admin Panel Logic
+    async function admOp(tbl, id, val) {
+        const col = tbl === 'merchants' ? 'username' : 'id';
+        await _sb.from(tbl).update(val).eq(col, id);
+        loadAdminData(); renderGrid();
+    }
+
+    async function loadAdminData() {
+        const { data: u } = await _sb.from('merchants').select('*');
+        const { data: p } = await _sb.from('products').select('*').eq('status', 'pending');
+        
+        const uBox = document.getElementById('admin-merchants'); uBox.innerHTML = "";
+        u?.forEach(m => {
+            uBox.innerHTML += `
+                <div class="p-4 bg-slate-50 border rounded-2xl">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-[10px] font-black">${m.username}</p>
+                        <span class="text-[7px] font-bold bg-slate-200 px-1 rounded uppercase">${m.status}</span>
+                    </div>
+                    <div class="flex gap-2 mb-3">
+                        <button onclick="admOp('merchants','${m.username}',{status:'active'})" class="text-teal-600 text-[8px] font-bold underline">APPROVE</button>
+                        <button onclick="admOp('merchants','${m.username}',{status:'locked'})" class="text-red-500 text-[8px] font-bold underline">LOCK</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="tel:${m.whatsapp}" class="adm-btn btn-blue !py-2 !text-[7px]">Call</a>
+                        <a href="mailto:${m.email}" class="adm-btn btn-neutral !py-2 !text-[7px]">Email</a>
+                    </div>
+                </div>`;
+        });
+
+        const pBox = document.getElementById('admin-products'); pBox.innerHTML = "";
+        p?.forEach(itm => {
+            pBox.innerHTML += `<div class="bg-white p-3 rounded-xl border flex justify-between items-center text-[9px] font-black uppercase">
+                <span>${itm.name}</span>
+                <button onclick="admOp('products','${itm.id}',{status:'active'})" class="text-teal-600 underline">APPROVE</button>
+            </div>`;
+        });
+    }
+
+    // Upload Logic
+    document.getElementById('listing-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        let urls = [];
-        for (let s of document.querySelectorAll('.img-slot')) if(s.files[0]) { const u = await uploadFile(s.files[0]); if(u) urls.push(u); }
-        await _supabase.from('products').insert([{
-            name: document.getElementById('itemName').value, category: document.getElementById('itemCategory').value,
-            price: parseFloat(document.getElementById('itemPrice').value), description: document.getElementById('itemDesc').value,
-            images: urls, owner: currentUser.username, status: 'pending', leads_count: 0
+        let images = [];
+        for (let input of document.querySelectorAll('.img-slot')) {
+            if(input.files[0]) {
+                const path = `products/${Date.now()}_${Math.random().toString(36).substring(7)}.png`;
+                const { error } = await _sb.storage.from('product-images').upload(path, input.files[0]);
+                if(!error) images.push(_sb.storage.from('product-images').getPublicUrl(path).data.publicUrl);
+            }
+        }
+        await _sb.from('products').insert([{
+            name: document.getElementById('f-name').value, category: document.getElementById('f-cat').value,
+            price: parseFloat(document.getElementById('f-price').value), description: document.getElementById('f-desc').value,
+            images: images, owner: currentUser.username, status: 'pending'
         }]);
-        location.reload();
+        alert("Sent for review!"); location.reload();
     });
 
-    function filterByCat(cat, btn) {
-        selectedCat = cat;
+    function filterBy(cat, btn) {
+        activeCat = cat;
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); renderProducts();
+        btn.classList.add('active'); renderGrid();
     }
-    function handleSearch(term) {
-        const l = term.toLowerCase();
-        document.querySelectorAll('.product-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(l) ? 'flex' : 'none');
+    function doSearch(val) {
+        const t = val.toLowerCase();
+        document.querySelectorAll('.product-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? 'flex' : 'none');
     }
-    renderProducts();
+
+    renderGrid();
 </script>
 </body>
 </html>
